@@ -35,7 +35,7 @@ char* read_file(const char* file_to_read) {
         }
     }
     
-    if(strcmp(extension,".j")==0) {
+    if(strcmp(extension,".jang")==0) {
         FILE* file = fopen(file_to_read,"rb");
 
         if(!(file)) {
