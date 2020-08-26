@@ -10,5 +10,6 @@ typedef struct parser {
 } parser_;
 
 parser_* init_parser(lexer_* lexer);
+parser_* parse(parser_* parser);
 
 #endif

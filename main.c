@@ -5,7 +5,8 @@
 #include "src/parser.h"
 
 /*
-    JsData: Json, just as a language!
+    Jang: Json, just as a language!
+    File extension: .j
 */
 
 int main(int argc, char* args[]) {
@@ -17,6 +18,7 @@ int main(int argc, char* args[]) {
             tokens
         );
         parser_* parser = init_parser(lexer);
+        parse(parser);
     } else {
         fprintf(stderr,"\nError: JsDatas' compiler expects the following command:\n./main.o <filename>\n\n");
         fflush(stderr);

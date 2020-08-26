@@ -14,9 +14,4 @@ typedef struct Tokens {
 
 Tokens_* init_token(int token_id, char* value);
 
-#define raise_error(errmsg, ...) \
-fprintf(stderr,errmsg, ##__VA_ARGS__);\
-fflush(stderr);\
-exit(EXIT_FAILURE)\
-
 #endif

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "tokens.h"
+#include "easy_access.h"
 
 static inline void* assign(Tokens_* tokens, int id, char* value) {
     tokens->token_id = id;
@@ -35,6 +36,7 @@ Tokens_* init_token(int token_id, char* value) {
         }
         default: {
             raise_error("\nValue does not match with token id\n\n");
+            CLOSE(-1);
         }
     }
 }
