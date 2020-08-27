@@ -11,6 +11,8 @@ typedef struct parser {
     struct {
         char* PKG_NAME;
         char* PKG_VERSION;
+        size_t amount_of_imports;
+        void** imports;
     } *PKG_INFO;
 } parser_;
 

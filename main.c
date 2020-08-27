@@ -20,7 +20,7 @@ int main(int argc, char* args[]) {
         parser_* parser = init_parser(lexer);
         parse(parser);
     } else {
-        fprintf(stderr,"\nError: JsDatas' compiler expects the following command:\n./main.o <filename>\n\n");
+        fprintf(stderr,"\nError: The Jang compiler expects the following command:\n./main.o <filename>\n\n");
         fflush(stderr);
         exit(EXIT_FAILURE);
     }

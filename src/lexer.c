@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "easy_access.h"
 #include "lexer.h"
 
 lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
@@ -155,8 +156,9 @@ Tokens_* get_next_token(lexer_* lexer) {
             lexer->is_string_assignment = 0;
 
             //gather_id(lexer);
-            pickup_string(lexer);
-            advance(lexer);
+            if(lexer->current_char!='"') pickup_string(lexer);
+            else raise_error("\nExpecting string got NULL on line %d(%d characters in)\n\n",lexer->current_line,lexer->character_number-1);
+            //advance(lexer);
 
             return lexer->tokens;
         }

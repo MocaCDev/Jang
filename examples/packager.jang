@@ -1,0 +1,4 @@
+PKG{
+    NAME: "AnotherPackage",
+    VERSION: "1.0.1"
+};
