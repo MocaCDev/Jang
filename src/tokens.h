@@ -3,10 +3,19 @@
 
 typedef struct Tokens {
     enum {
+        /* KEYWORD IDEALS */
         TOKEN_ID,
         TOKEN_LEFT_CURL,
         TOKEN_RIGHT_CURL,
         PKG_KEYWORD,
+        /*END OF KEYWORD IDEALS*/
+
+        /* PUNCTUATION */
+        TOKEN_EQUALS,
+        TOKEN_COLON,
+        TOKEN_COMMA,
+        TOKEN_SEMI,
+        /*END OF PUNCTUATION */
         TOKEN_EOF
     } token_id;
     char* token_value;
