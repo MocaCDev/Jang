@@ -15,7 +15,7 @@ parser_* init_parser(lexer_* lexer, char* active_file) {
     parser->current_token_info = get_next_token(lexer);
     parser->last_token_info = parser->current_token_info;
     parser->PKG_INFO->amount_of_imports = 0;
-    parser->PKG_INFO->imports = calloc(parser->PKG_INFO->amount_of_imports+1,sizeof(*parser->PKG_INFO->imports));
+    parser->PKG_INFO->imports = calloc(1,sizeof(parser->PKG_INFO->imports));
 
     return parser;
 }
@@ -77,37 +77,34 @@ static inline void* PKG_SETUP(parser_* parser) {
                 check_operation(parser,"PKG:IMPORT");
 
                 if(parser->current_token_info->token_value  && !(parser->current_token_info->token_value[0] == '"')) {
-
                     static int imports;
-
-                    /* READING THE FILE */
-                    imports++;
-                    parser->PKG_INFO->amount_of_imports = imports;
-                    parser->PKG_INFO->imports = realloc(
-                        parser->PKG_INFO->imports,
-                        parser->PKG_INFO->amount_of_imports*sizeof(parser->PKG_INFO->imports)
-                    );
-
-                    parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1] = (char*)strcat(parser->current_token_info->token_value,".jang");
-
-                    if(strcmp(parser->current_token_info->token_value,parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1])==0) raise_error("\nCannot import active file '%s' inside of imported file\n\n",parser->active_file);
+                    char* file_to_open = strcat(parser->current_token_info->token_value,".jang");
 
                     Tokens_* tokens = calloc(1,sizeof(*tokens));
                     lexer_* lexer = init_lexer(
-                        read_file(parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1]),
+                        read_file(file_to_open),
                         tokens
                     );
-                    parser_* parser_2 = init_parser(lexer,parser->active_file);
-                    if(
-                        !(
-                            strcmp(parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1],parser->active_file)==0
-                        )
-                    ) {
+                    parser_* parser_2 = init_parser(lexer,file_to_open);
+                    /*
+                        There would be an if statement checking import names, but it seems as if the C compiler covers it for us!
+                        If the user imports the 'active file' inside the imported file, the terminal will print 'killed'.
+                        If the user imports the currnt 'active file' that was imported in the 'active file', the terminal will
+                        print 'killed'
+                    */
+                    parse(parser_2);
 
-                        parse(parser_2);
+                    if(parser_2->PKG_INFO->PKG_NAME) {
+                        parser->PKG_INFO->amount_of_imports = ++imports;
+                        parser->PKG_INFO->imports = realloc(
+                            parser->PKG_INFO->imports,
+                            parser->PKG_INFO->amount_of_imports*sizeof(parser->PKG_INFO->imports)
+                        );
+                        parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1] = (char*)file_to_open;
 
-                    } else raise_error("\nCannot import active file '%s' inside of imported file\n\n",parser->active_file);
-
+                        /* Assigning the second parser to the primary parser */
+                        parser_2->PKG_INFO = parser->PKG_INFO;
+                    }
                 }
 
                 gather_next_token(parser, TOKEN_ID);
