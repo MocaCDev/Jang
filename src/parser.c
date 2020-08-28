@@ -6,9 +6,10 @@
 #include "easy_access.h"
 #include "file_reader.h"
 
-parser_* init_parser(lexer_* lexer) {
+parser_* init_parser(lexer_* lexer, char* active_file) {
     parser_* parser = calloc(1,sizeof(*parser));
     parser->PKG_INFO = calloc(1,sizeof(parser->PKG_INFO));
+    parser->active_file = active_file;
 
     parser->lexer = lexer;
     parser->current_token_info = get_next_token(lexer);
@@ -76,23 +77,37 @@ static inline void* PKG_SETUP(parser_* parser) {
                 check_operation(parser,"PKG:IMPORT");
 
                 if(parser->current_token_info->token_value  && !(parser->current_token_info->token_value[0] == '"')) {
-                    parser->PKG_INFO->amount_of_imports++;
+
+                    static int imports;
+
+                    /* READING THE FILE */
+                    imports++;
+                    parser->PKG_INFO->amount_of_imports = imports;
                     parser->PKG_INFO->imports = realloc(
                         parser->PKG_INFO->imports,
                         parser->PKG_INFO->amount_of_imports*sizeof(parser->PKG_INFO->imports)
                     );
-                    strcat(parser->current_token_info->token_value,".jang");
 
-                    parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1] = (char*)parser->current_token_info->token_value;
+                    parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1] = (char*)strcat(parser->current_token_info->token_value,".jang");
 
-                    /* READING THE FILE */
+                    if(strcmp(parser->current_token_info->token_value,parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1])==0) raise_error("\nCannot import active file '%s' inside of imported file\n\n",parser->active_file);
+
                     Tokens_* tokens = calloc(1,sizeof(*tokens));
                     lexer_* lexer = init_lexer(
-                        read_file((char*)parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1]),
+                        read_file(parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1]),
                         tokens
                     );
-                    parser_* parser_2 = init_parser(lexer);
-                    parse(parser_2);
+                    parser_* parser_2 = init_parser(lexer,parser->active_file);
+                    if(
+                        !(
+                            strcmp(parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1],parser->active_file)==0
+                        )
+                    ) {
+
+                        parse(parser_2);
+
+                    } else raise_error("\nCannot import active file '%s' inside of imported file\n\n",parser->active_file);
+
                 }
 
                 gather_next_token(parser, TOKEN_ID);

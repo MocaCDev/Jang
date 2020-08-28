@@ -12,6 +12,7 @@ typedef struct lexer {
     Tokens_* tokens;
     int pkg_found;
     int is_string_assignment;
+    int imports;
 } lexer_;
 
 lexer_* init_lexer();

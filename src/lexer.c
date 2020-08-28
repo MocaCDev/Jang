@@ -17,6 +17,7 @@ lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
     lexer->tokens = tokens;
     lexer->pkg_found = 1;
     lexer->is_string_assignment = 1;
+    lexer->imports = 0;
 
     return lexer;
 }
@@ -186,6 +187,7 @@ Tokens_* get_next_token(lexer_* lexer) {
         switch(lexer->current_char) {
             case '{': return advance_with_token(init_token(TOKEN_LEFT_CURL,convert_to_string(lexer)), lexer);
             case '}': return advance_with_token(init_token(TOKEN_RIGHT_CURL,convert_to_string(lexer)),lexer);
+            case ')': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer)), lexer);
             case '=': return advance_with_token(init_token(TOKEN_EQUALS,convert_to_string(lexer)), lexer);
             case ':': return advance_with_token(init_token(TOKEN_COLON,convert_to_string(lexer)), lexer);
             case ',': return advance_with_token(init_token(TOKEN_COMMA,convert_to_string(lexer)), lexer);

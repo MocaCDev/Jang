@@ -15,6 +15,8 @@ typedef struct Tokens {
         TOKEN_COLON,
         TOKEN_COMMA,
         TOKEN_SEMI,
+        TOKEN_LEFT_P,
+        TOKEN_RIGHT_P,
         /*END OF PUNCTUATION */
         TOKEN_EOF
     } token_id;

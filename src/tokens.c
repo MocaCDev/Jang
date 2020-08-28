@@ -31,6 +31,12 @@ Tokens_* init_token(int token_id, char* value) {
         case TOKEN_SEMI: {
             if(strcmp(value,";")==0) return assign(tokens,token_id,value);
         }
+        case TOKEN_LEFT_P: {
+            if(strcmp(value,"(")==0) return assign(tokens,token_id,value);
+        }
+        case TOKEN_RIGHT_P: {
+            if(strcmp(value,")")==0) return assign(tokens,token_id,value);
+        }
         case TOKEN_LEFT_CURL: {
             if(strcmp(value,"{")==0) return assign(tokens,token_id,value);
         }
