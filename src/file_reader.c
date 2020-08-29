@@ -1,7 +1,12 @@
 #include "file_reader.h"
+#include "easy_access.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <errno.h>
+#include <dirent.h>
 
 static file_buffer* buffer_file_size(size_t size) {
     file_buffer* f_b = calloc(1,sizeof(*f_b));
@@ -12,12 +17,27 @@ static file_buffer* buffer_file_size(size_t size) {
     return f_b;
 }
 
+void* gather_main_jang_file() {
+    system("python3 src/gather_main.py");
+
+    FILE* find_main = fopen("main.txt","rb");
+    char* a = calloc(500,sizeof(char));
+
+    if(!find_main) raise_error("\nNo main file found to execute\n\n");
+
+    fgets(a, 500, find_main);
+    fclose(find_main);
+    
+    return a;
+}
+
 char* read_file(const char* file_to_read) {
     char* buffer = 0;
     long length;
 
     int index = 0, length_ = 0;
     char* extension = calloc(1,sizeof(char));
+    gather_main_jang_file();
 
     for(;index < strlen(file_to_read); index++) {
         if(file_to_read[index] == '.') {
