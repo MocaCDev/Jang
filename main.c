@@ -18,7 +18,7 @@ int main(int argc, char* args[]) {
         read_file(main_file_path),
         tokens
     );
-    parser_* parser = init_parser(lexer, args[1]);
+    parser_* parser = init_parser(lexer, main_file_path);
     parse(parser);
     //} else {
         //fprintf(stderr,"\nError: The Jang compiler expects the following command:\n./main.o <filename>\n\n");

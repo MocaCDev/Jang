@@ -102,7 +102,7 @@ static inline void pickup_string(lexer_* lexer) {
 
         val = realloc(
             val,
-            strlen(cur)*sizeof(char*)
+            (strlen(val)+1)*sizeof(char*)
         );
 
         strcat(val,cur);

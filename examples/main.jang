@@ -1,6 +1,6 @@
 // Packaging up examples/ex.jang
 PKG{
-    NAME: "Example Jang",
+    NAME: "Package Name Can Be Anything! Literally anything, but usually not this long lol",
     VERSION: "1.0.1",
     IMPORT: "examples/packager"
 };

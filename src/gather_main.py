@@ -19,3 +19,9 @@ for i in paths:
                         raise Exception('\nPython exception: More than 1 main.jang file found. Must only be one\n\n')
                     with open('main.txt','w') as file:
                         file.write(dir+'/'+f)
+                        file.close()
+
+if amount_of_mains < 1:
+    with open('main.txt','w') as file:
+        file.write('err')
+        file.close()

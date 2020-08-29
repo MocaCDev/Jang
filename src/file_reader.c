@@ -26,6 +26,8 @@ void* gather_main_jang_file() {
     if(!find_main) raise_error("\nNo main file found to execute\n\n");
 
     fgets(a, 500, find_main);
+
+    if(strcmp(a,"err")==0) raise_error("\nNo main.jang file found to run your Jang application\nPlease create a main.jang file to run your project\n\n");
     fclose(find_main);
     
     return a;
