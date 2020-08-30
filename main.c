@@ -3,6 +3,7 @@
 #include "src/lexer.h"
 #include "src/file_reader.h"
 #include "src/parser.h"
+#include "src/syn_tree.h"
 
 /*
     Jang: Json, just as a language!

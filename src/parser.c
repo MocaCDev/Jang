@@ -15,7 +15,7 @@ parser_* init_parser(lexer_* lexer, char* active_file) {
     parser->current_token_info = get_next_token(lexer);
     parser->last_token_info = parser->current_token_info;
     parser->PKG_INFO->amount_of_imports = 0;
-    parser->PKG_INFO->imports = calloc(1,sizeof(parser->PKG_INFO->imports));
+    //parser->PKG_INFO->imports = calloc(1,sizeof(parser->PKG_INFO->imports));
 
     return parser;
 }
@@ -99,13 +99,18 @@ static inline void* PKG_SETUP(parser_* parser) {
                     */
                     parse(parser_2);
 
+                    if(!(strcmp(parser->current_token_info->token_value,parser->active_file)==0)) {
+                        parser->PKG_INFO->current_import_name = parser->current_token_info->token_value;
+                    }
+
                     if(parser_2->PKG_INFO->PKG_NAME) {
                         parser->PKG_INFO->amount_of_imports = ++imports;
-                        parser->PKG_INFO->imports = realloc(
+                        /*parser->PKG_INFO->imports = realloc(
                             parser->PKG_INFO->imports,
                             parser->PKG_INFO->amount_of_imports*sizeof(parser->PKG_INFO->imports)
                         );
-                        parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1] = (char*)file_to_open;
+                        parser->PKG_INFO->imports[parser->PKG_INFO->amount_of_imports-1] = file_to_open;*/
+                        printf("%ld:%s\n",parser->PKG_INFO->amount_of_imports,parser->PKG_INFO->current_import_name);
 
                         /* Assigning the second parser to the primary parser */
                         parser_2->PKG_INFO = parser->PKG_INFO;

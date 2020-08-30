@@ -2,6 +2,7 @@
 #define PARSER
 #include "tokens.h"
 #include "lexer.h"
+#include <stdlib.h>
 
 typedef struct parser {
     Tokens_* current_token_info;
@@ -13,7 +14,8 @@ typedef struct parser {
         char* PKG_NAME;
         char* PKG_VERSION;
         size_t amount_of_imports;
-        void** imports;
+        char* current_import_name;
+        //char** imports; ~ This was not needed since we are storing a parser_ struct array for out syntax tree and runtime. All checkings will happen there
     } *PKG_INFO;
 } parser_;
 
