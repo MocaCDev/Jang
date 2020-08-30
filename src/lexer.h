@@ -13,9 +13,11 @@ typedef struct lexer {
     int pkg_found;
     int is_string_assignment;
     int imports;
+    int is_special;
 } lexer_;
 
 lexer_* init_lexer();
 Tokens_* get_next_token(lexer_* lexer);
+void* gather_id_full(lexer_* lexer);
 
 #endif

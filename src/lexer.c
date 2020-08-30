@@ -18,6 +18,7 @@ lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
     lexer->pkg_found = 1;
     lexer->is_string_assignment = 1;
     lexer->imports = 0;
+    lexer->is_special = 1;
 
     return lexer;
 }
@@ -32,8 +33,9 @@ static inline void advance(lexer_* lexer) {
             lexer->current_line++;
             lexer->character_number = 1;
         }
+        update_token_info(lexer->current_line, lexer->character_number, lexer->tokens);
         
-        if(lexer->current_char == '_') {
+        if(lexer->current_char == '_' && !(lexer->is_special==0)) {
             advance(lexer);
         }
     }
@@ -65,27 +67,48 @@ static inline char* convert_to_string(lexer_* lexer) {
     return value;
 }
 
-static inline void* gather_converted_string(lexer_* lexer, int is_variable_name) {
+static inline void* gather_converted_string(lexer_* lexer, int is_variable_name, int is_special_keyword) {
     char* string_value = calloc(1,sizeof(char));
 
-    do {
-        char* current = (char*)convert_to_string(lexer);
+    if(is_special_keyword == 1) {
+        do {
+            char* current = (char*)convert_to_string(lexer);
 
-        string_value = realloc(
-            string_value,
-            strlen(current)*sizeof(char*)
-        );
-        strcat(string_value,current);
-        //free(current);
-        advance(lexer);
-    }  while(isalnum(lexer->current_char));
+            string_value = realloc(
+                string_value,
+                (strlen(string_value)+1)*sizeof(char*)
+            );
+            strcat(string_value,current);
+            //free(current);
+            advance(lexer);
+            if(lexer->current_char == ' ') {
+                break;
+            }
+        }  while(isalnum(lexer->current_char));
+    }
+    if(is_special_keyword == 0) {
+        do {
+            string_value = realloc(
+                string_value,
+                (strlen(string_value)+1)*sizeof(char*)
+            );
+            strcat(string_value,convert_to_string(lexer));
+
+            advance(lexer);
+            if(lexer->current_char == ' ' || lexer->current_char == ':' || lexer->current_char == '\0' || lexer->current_char == ';') break;
+        } while(1);
+
+        lexer->tokens->token_value = string_value;
+
+        return lexer;
+    }
     
     if(is_variable_name==0) {
         lexer->var_name = string_value;
         return lexer->var_name;
     }
     //printf("%s",string_value);
-    if(is_variable_name==1)  lexer->tokens = init_token(TOKEN_ID, string_value);
+    if(is_variable_name==1)  lexer->tokens = init_token(TOKEN_ID, string_value, lexer->tokens);
 
     return lexer;
 }
@@ -111,14 +134,14 @@ static inline void pickup_string(lexer_* lexer) {
         if(lexer->current_char=='"') {
             lexer->tokens->token_value = val;
 
-            lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value);
+            lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value, lexer->tokens);
             return advance(lexer);
         }
     } while(1);
 }
 
-static inline Tokens_* gather_id(lexer_* lexer) {
-    gather_converted_string(lexer,1);
+static inline Tokens_* gather_id(lexer_* lexer, int is_special) {
+    gather_converted_string(lexer,1,is_special);
     return lexer->tokens;
 }
 
@@ -135,6 +158,14 @@ static inline void gather_comment(lexer_* lexer) {
         if(lexer->current_char == '\0') return;
     } while(1);
 }
+static inline void multi_line_comment(lexer_* lexer) {
+    do {
+        advance(lexer);
+        if(lexer->current_char == '#') {
+            return advance(lexer);
+        }
+    } while(1);
+}
 
 Tokens_* get_next_token(lexer_* lexer) {
     do {
@@ -146,6 +177,15 @@ Tokens_* get_next_token(lexer_* lexer) {
             advance(lexer);
             if(lexer->current_char=='/') {
                 gather_comment(lexer);
+                continue;
+            }
+            continue;
+        }
+        if(lexer->current_char == '#') {
+            advance(lexer);
+
+            if(!(lexer->current_char == '#')) {
+                multi_line_comment(lexer);
                 continue;
             }
             continue;
@@ -165,37 +205,42 @@ Tokens_* get_next_token(lexer_* lexer) {
         }
         if(lexer->current_char=='\'') {
             advance(lexer);
-            return gather_id(lexer);
+            return gather_id(lexer,1);
         }
 
         if(isalnum(lexer->current_char)) {
-            gather_id(lexer);
+            gather_id(lexer,lexer->is_special);
             if(
                 lexer->pkg_found!=0 &&
                 (strcmp(lexer->tokens->token_value,"PKG")==0 ||
                 strcmp(lexer->tokens->token_value,"pkg")==0)
             ) {
-                lexer->tokens = init_token(PKG_KEYWORD, lexer->tokens->token_value);
+                lexer->tokens = init_token(PKG_KEYWORD, lexer->tokens->token_value, lexer->tokens);
 
                 //lexer->pkg_found = 0;
                 return lexer->tokens;
             }
-            lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value);
+            lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value, lexer->tokens);
+            return lexer->tokens;
+        }
+        if(ispunct(lexer->current_char) && lexer->current_char == '_') {
+            gather_id(lexer,lexer->is_special);
+            lexer->tokens = init_token(EXPORTS_KEYWORD,lexer->tokens->token_value, lexer->tokens);
             return lexer->tokens;
         }
         
         switch(lexer->current_char) {
-            case '{': return advance_with_token(init_token(TOKEN_LEFT_CURL,convert_to_string(lexer)), lexer);
-            case '}': return advance_with_token(init_token(TOKEN_RIGHT_CURL,convert_to_string(lexer)),lexer);
-            case ')': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer)), lexer);
-            case '=': return advance_with_token(init_token(TOKEN_EQUALS,convert_to_string(lexer)), lexer);
-            case ':': return advance_with_token(init_token(TOKEN_COLON,convert_to_string(lexer)), lexer);
-            case ',': return advance_with_token(init_token(TOKEN_COMMA,convert_to_string(lexer)), lexer);
-            case ';': return advance_with_token(init_token(TOKEN_SEMI,convert_to_string(lexer)),lexer);
+            case '{': return advance_with_token(init_token(TOKEN_LEFT_CURL,convert_to_string(lexer), lexer->tokens), lexer);
+            case '}': return advance_with_token(init_token(TOKEN_RIGHT_CURL,convert_to_string(lexer), lexer->tokens),lexer);
+            case ')': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer), lexer->tokens), lexer);
+            case '=': return advance_with_token(init_token(TOKEN_EQUALS,convert_to_string(lexer), lexer->tokens), lexer);
+            case ':': return advance_with_token(init_token(TOKEN_COLON,convert_to_string(lexer), lexer->tokens), lexer);
+            case ',': return advance_with_token(init_token(TOKEN_COMMA,convert_to_string(lexer), lexer->tokens), lexer);
+            case ';': return advance_with_token(init_token(TOKEN_SEMI,convert_to_string(lexer), lexer->tokens),lexer);
             default: break;
         }
         
     } while(lexer->current_char != '\0' && lexer->index < strlen(lexer->contents));
 
-    return init_token(TOKEN_EOF,"\0");
+    return init_token(TOKEN_EOF,"\0", lexer->tokens);
 }

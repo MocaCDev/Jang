@@ -43,8 +43,10 @@ static inline void* PKG_SETUP(parser_* parser) {
         parser = gather_next_token(parser, PKG_KEYWORD);
 
         if(parser->current_token_info->token_id==TOKEN_LEFT_CURL) {
+            parser->lexer->is_special = 0;
             gather_next_token(parser, TOKEN_LEFT_CURL);
 
+            BEGINNING:
             if(strcmp(parser->current_token_info->token_value,"NAME")==0) {
                 gather_next_token(parser, TOKEN_ID);
                 
@@ -55,9 +57,11 @@ static inline void* PKG_SETUP(parser_* parser) {
                     gather_next_token(parser, TOKEN_ID);
 
                     if(parser->current_token_info->token_id==TOKEN_COMMA) gather_next_token(parser, TOKEN_COMMA);
+                    else goto END;
+                    goto BEGINNING;
                 }// else raise_error("\nExpected PKG:NAME, got NULL on line %d(%d characters in)\n\n",parser->lexer->current_line,(parser->lexer->character_number-1));
             }
-            if(strcmp(parser->current_token_info->token_value,"VERSION")==0) {
+            else if(strcmp(parser->current_token_info->token_value,"VERSION")==0) {
                 gather_next_token(parser, TOKEN_ID);
 
                 check_operation(parser,"PKG:VERSION");
@@ -68,10 +72,11 @@ static inline void* PKG_SETUP(parser_* parser) {
 
                     if(parser->current_token_info->token_id == TOKEN_COMMA) gather_next_token(parser, TOKEN_COMMA);
                     else goto END;
+                    goto BEGINNING;
                 }
 
             }
-            if(strcmp(parser->current_token_info->token_value,"IMPORT")==0) {
+            else if(strcmp(parser->current_token_info->token_value,"IMPORT")==0) {
                 gather_next_token(parser, TOKEN_ID);
 
                 check_operation(parser,"PKG:IMPORT");
@@ -108,13 +113,33 @@ static inline void* PKG_SETUP(parser_* parser) {
                 }
 
                 gather_next_token(parser, TOKEN_ID);
+                if(parser->current_token_info->token_id == TOKEN_COMMA) gather_next_token(parser, TOKEN_COMMA);
+                else goto END;
+                goto BEGINNING;
             }
             
             END:
-            if(parser->current_token_info->token_id == TOKEN_RIGHT_CURL) gather_next_token(parser, TOKEN_RIGHT_CURL);
+            if(parser->current_token_info->token_id == TOKEN_RIGHT_CURL) {
+                gather_next_token(parser, TOKEN_RIGHT_CURL);
+                if(
+                    parser->current_token_info->token_id == EXPORTS_KEYWORD && 
+                    strcmp(parser->active_file,"main.jang")==0
+                ) {
+                    raise_error("\nError: Cannot export any default variables/methods in main Jang file\n\n");
+                } else if(
+                    parser->current_token_info->token_id == EXPORTS_KEYWORD &&
+                    !(
+                        strcmp(parser->active_file,"main.jang")==0
+                    )
+                ) {
+                    gather_next_token(parser, EXPORTS_KEYWORD);
+                }
+            }
             else raise_error("\nExpecting closing '}' on line %d\n\n",parser->lexer->current_line);
             if(parser->current_token_info->token_id==TOKEN_SEMI) gather_next_token(parser, TOKEN_SEMI);
             else raise_error("\nExpecting ';' at end of PKG declaration\n\n");
+            parser->lexer->is_special = 1;
+            parser->lexer->tokens = assign_current_parser(parser->lexer->tokens, parser);
         } else {
             raise_error("\nError: Expecting '{' on line %d, found %s\n\n",parser->lexer->current_line,parser->current_token_info->token_value);
             //CLOSE(EXIT_FAILURE);

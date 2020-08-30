@@ -8,6 +8,7 @@ typedef struct Tokens {
         TOKEN_LEFT_CURL,
         TOKEN_RIGHT_CURL,
         PKG_KEYWORD,
+        EXPORTS_KEYWORD,
         /*END OF KEYWORD IDEALS*/
 
         /* PUNCTUATION */
@@ -20,9 +21,14 @@ typedef struct Tokens {
         /*END OF PUNCTUATION */
         TOKEN_EOF
     } token_id;
+    int current_line;
+    int current_char;
     char* token_value;
+    void* parser;
 } Tokens_;
 
-Tokens_* init_token(int token_id, char* value);
+Tokens_* init_token(int token_id, char* value, Tokens_* tokens);
+Tokens_* update_token_info(int lines, int char_num, Tokens_* tokens);
+Tokens_* assign_current_parser(Tokens_* tokens,void* parser);
 
 #endif
