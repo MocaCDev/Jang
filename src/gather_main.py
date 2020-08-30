@@ -15,14 +15,13 @@ amount_of_mains = 0
 
 for i in paths:
     for dir, _, files in os.walk(i, topdown = True):
-        files = [dir+'/'+d for d in files if '.jang' in d and 'main' in d]
-        if len(files) > 0:
-            amount_of_mains += 1
+        files_ = [dir+'/'+d for d in files if '.jang' in d and 'main' in d]
+        amount_of_mains = len(files)
+        if amount_of_mains > 0:
             with open('main.txt','w') as file:
                 file.write(files[0])
                 file.close()
-
-if amount_of_mains < 1:
-    with open('main.txt','w') as file:
-        file.write('err')
-        file.close()
+        else:
+            with open('main.txt','w') as file:
+                file.write('err')
+                file.close()
