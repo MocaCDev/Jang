@@ -10,25 +10,17 @@ import os
 # USAGE IN file_reader.c TO OPEN 'main.txt' WITH INFORMATION OF EITHER:
 # A. directory_path/main.jang, MEANING FILE 'main.jang' WAS FOUND IN 'directory_path', OR
 # B. err, MEANING THERE WAS NO DIRECTORY THAT STORED A FILE 'main.jang'
-
-paths = []
+paths = [i for i in os.listdir() if os.path.isdir(i)]
 amount_of_mains = 0
-
-for i in os.listdir():
-    if os.path.isdir(i):
-        paths.append(i)
 
 for i in paths:
     for dir, _, files in os.walk(i, topdown = True):
-        for f in files:
-            if '.jang' in f:
-                if 'main' in f:
-                    amount_of_mains+=1
-                    if amount_of_mains > 1:
-                        raise Exception('\nPython exception: More than 1 main.jang file found. Must only be one\n\n')
-                    with open('main.txt','w') as file:
-                        file.write(dir+'/'+f)
-                        file.close()
+        files = [dir+'/'+d for d in files if '.jang' in d and 'main' in d]
+        if len(files) > 0:
+            amount_of_mains += 1
+            with open('main.txt','w') as file:
+                file.write(files[0])
+                file.close()
 
 if amount_of_mains < 1:
     with open('main.txt','w') as file:
