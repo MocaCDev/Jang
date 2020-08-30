@@ -3,10 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <errno.h>
-#include <dirent.h>
+
+/* THIS FILE WILL SUPPORT ALL FILE HANDLING WITHIN THE Jang PROGRAMMING LANGUAGE */
 
 static file_buffer* buffer_file_size(size_t size) {
     file_buffer* f_b = calloc(1,sizeof(*f_b));
