@@ -22,7 +22,7 @@ SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
 
     /* IMPORTED PKG NAME INFORMATION. THIS HAS NOTHING TO DO WITH IMPORTED FILE NAMES */
     syntax_tree->amount_of_imported_pkg_names = 0;
-    syntax_tree->import_names = calloc(1,sizeof(*syntax_tree->import_names));
+    syntax_tree->imported_pkg_names = calloc(1,sizeof(*syntax_tree->import_names));
     syntax_tree->parser_pkg_information = calloc(1,sizeof(*syntax_tree->parser_pkg_information));
     
     /* MAIN PKG NAME. THIS HAS NOTHING TO DO WITH ANYTHING RELATED TO IMPORTS */
@@ -30,7 +30,7 @@ SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
 
     /* MAIN PKG IMPORTS */
     syntax_tree->amount_of_imports = 0;
-    syntax_tree->secondary_imports = calloc(1,sizeof(*syntax_tree->import_names));
+    syntax_tree->import_names = calloc(1,sizeof(*syntax_tree->import_names));
     syntax_tree->parser_import_information = calloc(1,sizeof(*syntax_tree->parser_import_information));
 
     /* IMPORTED PKG IMPORTS. THIS IS ALL IMPORT INFORMATION TAKEN PLACE IN IMPORTED FILES */

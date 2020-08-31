@@ -2,6 +2,7 @@
 #define PARSER
 #include "tokens.h"
 #include "lexer.h"
+#include "syn_tree.h"
 #include <stdlib.h>
 
 typedef struct parser {
@@ -20,6 +21,6 @@ typedef struct parser {
 } parser_;
 
 parser_* init_parser(lexer_* lexer, char* active_file);
-parser_* parse(parser_* parser);
+SYN_TREE_* parse(parser_* parser);
 
 #endif

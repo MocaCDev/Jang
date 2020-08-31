@@ -20,7 +20,7 @@ int main(int argc, char* args[]) {
         tokens
     );
     parser_* parser = init_parser(lexer, "main.jang");
-    parse(parser);
+    SYN_TREE_* tree = parse(parser);
     //} else {
         //fprintf(stderr,"\nError: The Jang compiler expects the following command:\n./main.o <filename>\n\n");
         //fflush(stderr);

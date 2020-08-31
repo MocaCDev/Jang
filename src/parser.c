@@ -5,6 +5,7 @@
 #include "lexer.h"
 #include "easy_access.h"
 #include "file_reader.h"
+#include "syn_tree.h"
 
 parser_* init_parser(lexer_* lexer, char* active_file) {
     parser_* parser = calloc(1,sizeof(*parser));
@@ -38,13 +39,15 @@ static inline void check_operation(parser_* parser, char* PKG_) {
     else raise_error("\nMissing ':' or '=' for %s\n\n",PKG_);
 }
 
-static inline void* PKG_SETUP(parser_* parser) {
+SYN_TREE_* PKG_SETUP(parser_* parser) {
     if(parser->current_token_info->token_id==PKG_KEYWORD) {
         parser->lexer->pkg_found = 0;
+        SYN_TREE_* syntax_tree = init_syntax_tree(TREE_PKG);
         parser = gather_next_token(parser, PKG_KEYWORD);
 
         if(parser->current_token_info->token_id==TOKEN_LEFT_CURL) {
             parser->lexer->is_special = 0;
+            static int amount;
             gather_next_token(parser, TOKEN_LEFT_CURL);
 
             BEGINNING:
@@ -55,6 +58,7 @@ static inline void* PKG_SETUP(parser_* parser) {
                 
                 if(parser->current_token_info->token_value && !(parser->current_token_info->token_value[0]=='"')) {
                     parser->PKG_INFO->PKG_NAME = parser->current_token_info->token_value;
+
                     gather_next_token(parser, TOKEN_ID);
 
                     if(parser->current_token_info->token_id==TOKEN_COMMA) gather_next_token(parser, TOKEN_COMMA);
@@ -130,6 +134,7 @@ static inline void* PKG_SETUP(parser_* parser) {
             }
             
             END:
+            //syntax_tree->amount_of_imported_pkg_names = amount;
             if(parser->current_token_info->token_id == TOKEN_RIGHT_CURL) {
                 gather_next_token(parser, TOKEN_RIGHT_CURL);
                 if(
@@ -155,22 +160,22 @@ static inline void* PKG_SETUP(parser_* parser) {
             raise_error("\nError: Expecting '{' on line %d, found %s\n\n",parser->lexer->current_line,parser->current_token_info->token_value);
             //CLOSE(EXIT_FAILURE);
         }
+        return syntax_tree;
     } else {
         raise_error("\nError: Expecting \"PKG\" keyword, got token %d\n\n",parser->current_token_info->token_id);
         CLOSE(EXIT_FAILURE);
     }
-    return parser;
 }
 static inline void* parse_id(parser_* parser) {
 
     return parser;
 }
 
-parser_* parse(parser_* parser) {
+SYN_TREE_* parse(parser_* parser) {
     switch(parser->current_token_info->token_id) {
         case PKG_KEYWORD: return PKG_SETUP(parser);
         case TOKEN_ID: return parse_id(parser);
         default: break;
     }
-    return parser;
+    return init_syntax_tree(TREE_EOF);
 }
