@@ -17,6 +17,7 @@ parser_* init_parser(lexer_* lexer, char* active_file) {
     parser->last_token_info = parser->current_token_info;
     parser->PKG_INFO->amount_of_imports = 0;
     parser->PKG_INFO->current_import_name = calloc(1,sizeof(char));
+    parser->PKG_INFO->export_values = calloc(1,sizeof(char*));
     //parser->PKG_INFO->imports = calloc(1,sizeof(parser->PKG_INFO->imports));
 
     return parser;
@@ -27,7 +28,7 @@ static inline parser_* gather_next_token(parser_* parser, int current_token_id) 
         parser->last_token_info = parser->current_token_info;
         parser->current_token_info = get_next_token(parser->lexer);
     } else {
-        raise_error("\nTokens do not match\n\n");
+        raise_error("\nTokens do not match(%s)\n\n",parser->current_token_info->token_value);
     }
 
     return parser;
@@ -134,7 +135,6 @@ SYN_TREE_* PKG_SETUP(parser_* parser) {
             }
             
             END:
-            //syntax_tree->amount_of_imported_pkg_names = amount;
             if(parser->current_token_info->token_id == TOKEN_RIGHT_CURL) {
                 gather_next_token(parser, TOKEN_RIGHT_CURL);
                 if(
@@ -149,6 +149,21 @@ SYN_TREE_* PKG_SETUP(parser_* parser) {
                     )
                 ) {
                     gather_next_token(parser, EXPORTS_KEYWORD);
+
+                    check_operation(parser, "PKG:END:_EXPORTS_");
+
+                    if(parser->current_token_info->token_id == TOKEN_LEFT_CURL) {
+                        gather_next_token(parser, TOKEN_LEFT_CURL);
+                        if(strcmp(parser->current_token_info->token_value,"NAME")==0) {
+                            parser->PKG_INFO->export_values = realloc(
+                                parser->PKG_INFO->export_values,
+                                (amount+1)*sizeof(char*)
+                            );
+                            parser->PKG_INFO->export_values[amount] = parser->PKG_INFO->PKG_NAME;
+                            gather_next_token(parser, TOKEN_ID);
+                        }
+                        gather_next_token(parser, TOKEN_RIGHT_CURL);
+                    }
                 }
             }
             else raise_error("\nExpecting closing '}' on line %d\n\n",parser->lexer->current_line);
