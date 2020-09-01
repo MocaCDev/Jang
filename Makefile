@@ -1,4 +1,13 @@
-.PHONY: Jang
+SRC = $(wildcard src/*.c)
+HDR = $(wildcard src/*.h)
+comp = gcc
+flags = -Wall -o main.jang.o main.c
 
-Jang:
-	gcc -Wall -o main.jang.o main.c src/syn_tree.c src/lexer.c src/parser.c src/file_reader.c src/runtime.c src/tokens.c
+.PHONY: Jang
+.PHONY: clean
+
+Jang: ${SRC} ${HDR}
+	${comp} ${flags}  ${SRC} ${HDR}
+
+clean: ${SRC} ${HDR}
+	rm *.o

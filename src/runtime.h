@@ -3,4 +3,6 @@
 
 typedef struct RUNTIME_ {
     
-}
+} Runtime_;
+
+#endif
