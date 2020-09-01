@@ -38,7 +38,7 @@ static inline parser_* gather_next_token(parser_* parser, int current_token_id) 
 
 /*
     Simple way to check basic operations:
-    '(', ')', ':', ';', '{', '}'
+    ':' and '='
 */
 static inline void* check_operation(parser_* parser, char* PKG_, int throw_err) {
 
