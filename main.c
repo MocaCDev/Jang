@@ -6,7 +6,7 @@
 #include "src/syn_tree.h"
 
 /*
-    Jang: Json, just as a language!
+    Jang:
     File extension: .j
 */
 

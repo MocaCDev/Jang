@@ -1,6 +1,4 @@
 #include "syn_tree.h"
-#include "easy_access.h"
-#include <stdlib.h>
 
 SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
     SYN_TREE_* syntax_tree = calloc(1,sizeof(*syntax_tree));

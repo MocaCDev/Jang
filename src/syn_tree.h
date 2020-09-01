@@ -1,7 +1,7 @@
 #ifndef SYNT_TREE
 #define SYNT_TREE
 //#include "parser.h"
-#include <stdlib.h>
+#include "easy_access.h"
 
 typedef struct SYN_TREE {
     enum {

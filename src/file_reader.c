@@ -1,8 +1,5 @@
 #include "file_reader.h"
 #include "easy_access.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 /* THIS FILE WILL SUPPORT ALL FILE HANDLING WITHIN THE Jang PROGRAMMING LANGUAGE */
 

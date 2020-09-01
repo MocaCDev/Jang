@@ -3,7 +3,7 @@
 #include "tokens.h"
 #include "lexer.h"
 #include "syn_tree.h"
-#include <stdlib.h>
+#include "easy_access.h"
 
 typedef struct parser {
     Tokens_* current_token_info;

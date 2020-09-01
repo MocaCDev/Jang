@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include "tokens.h"
 #include "easy_access.h"
 #include "parser.h"

@@ -1,5 +1,6 @@
 #ifndef TOKENS
 #define TOKENS
+#include "easy_access.h"
 
 typedef struct Tokens {
     enum {
