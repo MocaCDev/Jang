@@ -20,7 +20,7 @@ lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
     lexer->index = 0;
     lexer->current_char = lexer->contents[lexer->index];
     lexer->tokens = tokens;
-    lexer->pkg_found = 1;
+    lexer->is_import = 1;
     lexer->is_string_assignment = 1;
     lexer->imports = 0;
     lexer->is_special = 1;
@@ -55,7 +55,7 @@ void skip_whitespace(lexer_* lexer) {
     
     if(
         amount_of_whitespace > 2 && !(
-            lexer->pkg_found == 0
+            lexer->is_import == 0
         )
     ) {
         
@@ -216,8 +216,7 @@ Tokens_* get_next_token(lexer_* lexer) {
         if(isalnum(lexer->current_char)) {
             gather_id(lexer,lexer->is_special);
             if(
-                lexer->pkg_found!=0 &&
-                (strcmp(lexer->tokens->token_value,_IMPORTS_KEYWORD)==0)
+                strcmp(lexer->tokens->token_value,_IMPORTS_KEYWORD)==0
             ) {
                 lexer->tokens = init_token(IMPORTS_KEYWORD, lexer->tokens->token_value, lexer->tokens);
 

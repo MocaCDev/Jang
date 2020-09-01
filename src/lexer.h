@@ -10,7 +10,7 @@ typedef struct lexer {
     int index;
     char* var_name;
     Tokens_* tokens;
-    int pkg_found;
+    int is_import;
     int is_string_assignment;
     int imports;
     int is_special;
