@@ -65,11 +65,8 @@ Tokens_* init_token(int token_id, char* value, Tokens_* tokens) {
         case EXPORTS_KEYWORD: {
             if(strcmp(value,"_EXPORTS_")==0) return assign(tokens,token_id,value);
         }
-        case PKG_KEYWORD: {
-            if(
-                strcmp(value,"PKG")==0 ||
-                strcmp(value,"pkg")==0
-            ) return assign(tokens, token_id, value);
+        case IMPORTS_KEYWORD: {
+            if(strcmp(value,"IMPORT")==0) return assign(tokens, token_id, value);
         }
         default: {
             raise_error("\nValue does not match with token id(%s L:%d C:%d)\n\n",value,tokens->current_line,tokens->current_char-1);

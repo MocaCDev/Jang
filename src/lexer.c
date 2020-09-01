@@ -7,7 +7,7 @@
 
 /* KEYWORDS */
 const char* _EXPORTS_KEYWORD = "_EXPORTS_";
-const char* _PKG_KEYWORD = "PKG";
+const char* _IMPORTS_KEYWORD = "IMPORT";
 const char* _pkg_KEYWORD = "pkg";
 
 lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
@@ -46,7 +46,7 @@ static inline void advance(lexer_* lexer) {
     }
 }
 
-static inline void skip_whitespace(lexer_* lexer) {
+void skip_whitespace(lexer_* lexer) {
     static int amount_of_whitespace;
     do {
         advance(lexer);
@@ -217,10 +217,9 @@ Tokens_* get_next_token(lexer_* lexer) {
             gather_id(lexer,lexer->is_special);
             if(
                 lexer->pkg_found!=0 &&
-                (strcmp(lexer->tokens->token_value,_PKG_KEYWORD)==0 ||
-                strcmp(lexer->tokens->token_value,_pkg_KEYWORD)==0)
+                (strcmp(lexer->tokens->token_value,_IMPORTS_KEYWORD)==0)
             ) {
-                lexer->tokens = init_token(PKG_KEYWORD, lexer->tokens->token_value, lexer->tokens);
+                lexer->tokens = init_token(IMPORTS_KEYWORD, lexer->tokens->token_value, lexer->tokens);
 
                 //lexer->pkg_found = 0;
                 return lexer->tokens;
@@ -242,7 +241,8 @@ Tokens_* get_next_token(lexer_* lexer) {
         switch(lexer->current_char) {
             case '{': return advance_with_token(init_token(TOKEN_LEFT_CURL,convert_to_string(lexer), lexer->tokens), lexer);
             case '}': return advance_with_token(init_token(TOKEN_RIGHT_CURL,convert_to_string(lexer), lexer->tokens),lexer);
-            case ')': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer), lexer->tokens), lexer);
+            case '(': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer),lexer->tokens),lexer);
+            case ')': return advance_with_token(init_token(TOKEN_RIGHT_P,convert_to_string(lexer), lexer->tokens), lexer);
             case '=': return advance_with_token(init_token(TOKEN_EQUALS,convert_to_string(lexer), lexer->tokens), lexer);
             case ':': return advance_with_token(init_token(TOKEN_COLON,convert_to_string(lexer), lexer->tokens), lexer);
             case ',': return advance_with_token(init_token(TOKEN_COMMA,convert_to_string(lexer), lexer->tokens), lexer);

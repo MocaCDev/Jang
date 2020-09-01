@@ -19,5 +19,6 @@ typedef struct lexer {
 lexer_* init_lexer();
 Tokens_* get_next_token(lexer_* lexer);
 void* gather_id_full(lexer_* lexer);
+void skip_whitespace(lexer_* lexer);
 
 #endif

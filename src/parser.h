@@ -12,8 +12,6 @@ typedef struct parser {
     char* active_file;
 
     struct {
-        char* PKG_NAME;
-        char* PKG_VERSION;
         size_t amount_of_imports;
         char* current_import_name;
         //char** imports; ~ This was not needed since we are storing a parser_ struct array for out syntax tree and runtime. All checkings will happen there

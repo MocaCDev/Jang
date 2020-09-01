@@ -1,6 +1,1 @@
 // This package will be used in ex.jang!
-PKG{
-    NAME: "AnotherPackage",
-    VERSION: "1.0.1",
-    IMPORT: "examples/e"
-} _EXPORTS_;

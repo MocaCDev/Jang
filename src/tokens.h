@@ -7,7 +7,8 @@ typedef struct Tokens {
         TOKEN_ID,
         TOKEN_LEFT_CURL,
         TOKEN_RIGHT_CURL,
-        PKG_KEYWORD,
+        IMPORTS_KEYWORD, // multiple imports
+        _PKG_KEYWORD, // --
         EXPORTS_KEYWORD,
         /*END OF KEYWORD IDEALS*/
 
@@ -19,7 +20,10 @@ typedef struct Tokens {
         TOKEN_LEFT_P,
         TOKEN_RIGHT_P,
         /*END OF PUNCTUATION */
+
+        /* END OF FILE. NOT A TOKEN, JUST INITIALIZED AS ONE */
         TOKEN_EOF
+        /* END OF END OF FILE */
     } token_id;
     int current_line;
     int current_char;
