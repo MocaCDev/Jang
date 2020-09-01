@@ -13,9 +13,9 @@ typedef struct SYN_TREE {
 
     /* PKG INFORMATION */
     /* IMPORTED PKG NAME INFORMATION. THIS HAS NOTHING TO DO WITH IMPORTED FILE NAMES */
-    //size_t amount_of_imported_pkg_names;
-    //char** imported_pkg_names;
-    //void** parser_pkg_information; 
+    size_t amount_of_imported_pkg_names;
+    char** imported_pkg_names;
+    void** parser_pkg_information; 
     /*
         This parser struct array will be used to check each pkg name
     */

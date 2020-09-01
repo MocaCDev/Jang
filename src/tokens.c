@@ -62,6 +62,12 @@ Tokens_* init_token(int token_id, char* value, Tokens_* tokens) {
         case EXPORTS_KEYWORD: {
             if(strcmp(value,"_EXPORTS_")==0) return assign(tokens,token_id,value);
         }
+        case _PKG_KEYWORD: {
+            if(strcmp(value,"PKG")==0) return assign(tokens, token_id, value);
+        }
+        case _pkg_KEYWORD: {
+            if(strcmp(value,"pkg")==0) return assign(tokens,token_id,value);
+        }
         case IMPORTS_KEYWORD: {
             if(strcmp(value,"IMPORT")==0) return assign(tokens, token_id, value);
         }

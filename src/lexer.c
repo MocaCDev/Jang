@@ -2,9 +2,14 @@
 #include "lexer.h"
 
 /* KEYWORDS */
+
+/* All importing/exporting keyword features */
 const char* _EXPORTS_KEYWORD = "_EXPORTS_";
 const char* _IMPORTS_KEYWORD = "IMPORT";
-const char* _pkg_KEYWORD = "pkg";
+
+/* PKG keyword. */
+const char* _PKG_KEYWROD = "PKG";
+const char* _pkg_KEYWROD = "pkg";
 
 lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
     lexer_* lexer = calloc(1,sizeof(*lexer));
@@ -218,6 +223,11 @@ Tokens_* get_next_token(lexer_* lexer) {
 
                 //lexer->pkg_found = 0;
                 return lexer->tokens;
+            } else if(
+                strcmp(lexer->tokens->token_value,_PKG_KEYWROD) == 0
+            ) {
+                lexer->tokens = init_token(_PKG_KEYWORD, lexer->tokens->token_value, lexer->tokens);
+                return lexer->tokens;
             }
             lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value, lexer->tokens);
             return lexer->tokens;
@@ -234,14 +244,14 @@ Tokens_* get_next_token(lexer_* lexer) {
         }
         
         switch(lexer->current_char) {
-            case '{': return advance_with_token(init_token(TOKEN_LEFT_CURL,convert_to_string(lexer), lexer->tokens), lexer);
-            case '}': return advance_with_token(init_token(TOKEN_RIGHT_CURL,convert_to_string(lexer), lexer->tokens),lexer);
-            case '(': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer),lexer->tokens),lexer);
-            case ')': return advance_with_token(init_token(TOKEN_RIGHT_P,convert_to_string(lexer), lexer->tokens), lexer);
-            case '=': return advance_with_token(init_token(TOKEN_EQUALS,convert_to_string(lexer), lexer->tokens), lexer);
-            case ':': return advance_with_token(init_token(TOKEN_COLON,convert_to_string(lexer), lexer->tokens), lexer);
-            case ',': return advance_with_token(init_token(TOKEN_COMMA,convert_to_string(lexer), lexer->tokens), lexer);
-            case ';': return advance_with_token(init_token(TOKEN_SEMI,convert_to_string(lexer), lexer->tokens),lexer);
+            case '{': return advance_with_token(init_token(TOKEN_LEFT_CURL,convert_to_string(lexer), lexer->tokens), lexer);break;
+            case '}': return advance_with_token(init_token(TOKEN_RIGHT_CURL,convert_to_string(lexer), lexer->tokens),lexer);break;
+            case '(': return advance_with_token(init_token(TOKEN_LEFT_P,convert_to_string(lexer),lexer->tokens),lexer);break;
+            case ')': return advance_with_token(init_token(TOKEN_RIGHT_P,convert_to_string(lexer), lexer->tokens), lexer);break;
+            case '=': return advance_with_token(init_token(TOKEN_EQUALS,convert_to_string(lexer), lexer->tokens), lexer);break;
+            case ':': return advance_with_token(init_token(TOKEN_COLON,convert_to_string(lexer), lexer->tokens), lexer);break;
+            case ',': return advance_with_token(init_token(TOKEN_COMMA,convert_to_string(lexer), lexer->tokens), lexer);break;
+            case ';': return advance_with_token(init_token(TOKEN_SEMI,convert_to_string(lexer), lexer->tokens),lexer);break;
             default: break;
         }
         

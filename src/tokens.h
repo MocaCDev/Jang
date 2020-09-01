@@ -9,7 +9,8 @@ typedef struct Tokens {
         TOKEN_LEFT_CURL,
         TOKEN_RIGHT_CURL,
         IMPORTS_KEYWORD, // multiple imports
-        _PKG_KEYWORD, // --
+        _PKG_KEYWORD, // Packages the current .jang file
+        _pkg_KEYWORD, // sub-package of a file
         EXPORTS_KEYWORD,
         /*END OF KEYWORD IDEALS*/
 
