@@ -11,6 +11,9 @@ typedef struct SYN_TREE {
         TREE_EOF
     } TREE_TOKEN_TYPE;
 
+    /* SECONDARY TREE FOR IMPORTED FILES */
+    struct SYN_TREE* secondary_tree;
+
     /* PKG INFORMATION */
     /* IMPORTED PKG NAME INFORMATION. THIS HAS NOTHING TO DO WITH IMPORTED FILE NAMES */
     size_t amount_of_imported_pkg_names;

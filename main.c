@@ -4,6 +4,7 @@
 #include "src/file_reader.h"
 #include "src/parser.h"
 #include "src/syn_tree.h"
+#include "src/runtime.h"
 
 /*
     Jang:
@@ -21,6 +22,10 @@ int main(int argc, char* args[]) {
     );
     parser_* parser = init_parser(lexer, main_file_path);
     SYN_TREE_* tree = parse(parser);
+
+    if(!(tree->secondary_tree->TREE_TOKEN_TYPE == TREE_EOF)) {
+        check_tree_type(tree, parser, lexer);
+    }
     //} else {
         //fprintf(stderr,"\nError: The Jang compiler expects the following command:\n./main.o <filename>\n\n");
         //fflush(stderr);

@@ -1,2 +1,1 @@
-// This package will be used in ex.jang!
-IMPORT "examples/e";
+PKG{};

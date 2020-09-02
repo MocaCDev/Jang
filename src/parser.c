@@ -80,7 +80,7 @@ SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
     parser->PKG_INFO->current_import_name = parser->current_token_info->token_value;
 
     parser_* parser__ = init_parser(lexer, parser->current_token_info->token_value);
-    parse(parser__);
+    SYN_TREE_* syntax_tree_2 = parse(parser__);
 
     /* Storing all the names */
     arr = realloc(
@@ -101,10 +101,13 @@ SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
     syntax_tree->import_names = arr;
     syntax_tree->amount_of_imports = parser->PKG_INFO->amount_of_imports;
     syntax_tree->parser_import_information = parser_current_state;
+    syntax_tree->secondary_tree = syntax_tree_2;
 
     if(parser->current_token_info->token_id == TOKEN_SEMI) gather_next_token(parser, TOKEN_SEMI);
 
     free(arr);
+
+    //if(!(parser->current_token_info->token_id == TOKEN_EOF)) parse(parser);
     return syntax_tree;
 }
 
