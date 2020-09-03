@@ -134,12 +134,34 @@ static inline void* parse_id(parser_* parser) {
     return parser;
 }
 
-SYN_TREE_* parse(parser_* parser) {
+static inline void* parse_current_state_(parser_* parser,SYN_TREE_* syntax_tree) {
     switch(parser->current_token_info->token_id) {
+        case TOKEN_ID: return parse_id(parser);break;
+        case _PKG_KEYWORD: return Jang_Pkg_Setup(parser, syntax_tree);break;
+        case IMPORTS_KEYWORD: return IMPORT(parser, syntax_tree);break;
+        default: {
+            raise_error("\nError: Undefined token method captured\n\n");
+        }
+    }
+    return parser;
+}
+
+static SYN_TREE_* parse_cua(parser_* parser) {
+
+    SYN_TREE_* syntax_tree = init_syntax_tree(TREE_DEF);
+    syntax_tree->syntax_tree_values = calloc(1,sizeof(*syntax_tree->syntax_tree_values));
+
+    SYN_TREE_* current_state_parsed = parse_current_state_(parser,syntax_tree);
+
+    return syntax_tree;
+}
+
+SYN_TREE_* parse(parser_* parser) {
+    /*switch(parser->current_token_info->token_id) {
         case IMPORTS_KEYWORD: return IMPORT(parser, init_syntax_tree(TREE_PKG));
         case _PKG_KEYWORD: return Jang_Pkg_Setup(parser,init_syntax_tree(TREE_PKG));
         case TOKEN_ID: return parse_id(parser);
         default: break;
-    }
-    return init_syntax_tree(TREE_EOF);
+    }*/
+    return parse_cua(parser);
 }

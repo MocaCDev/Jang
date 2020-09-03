@@ -14,6 +14,10 @@ typedef struct SYN_TREE {
     /* SECONDARY TREE FOR IMPORTED FILES */
     struct SYN_TREE* secondary_tree;
 
+    /* For TREE_DEF */
+    struct SYN_TREE_** syntax_tree_values;
+    size_t size_;
+
     /* PKG INFORMATION */
     /* IMPORTED PKG NAME INFORMATION. THIS HAS NOTHING TO DO WITH IMPORTED FILE NAMES */
     size_t amount_of_imported_pkg_names;
