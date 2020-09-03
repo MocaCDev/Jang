@@ -98,6 +98,7 @@ SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
     parser->PKG_INFO->all_imports = arr;*/
 
     /* Setting up syntax tree */
+    syntax_tree = init_syntax_tree(TREE_IMPORTS);
     syntax_tree->import_names = arr;
     syntax_tree->amount_of_imports = parser->PKG_INFO->amount_of_imports;
     syntax_tree->parser_import_information = parser_current_state;
@@ -126,6 +127,7 @@ SYN_TREE_* Jang_Pkg_Setup(parser_* parser, SYN_TREE_* syntax_tree) {
     } else {
         raise_error("\nInvalid PKG format. Expected 'PKG{', found '%s'(Token Id Reported: '%d', Line %d, Characters: %d, `%s`)\n\n",parser->current_token_info->token_value,parser->current_token_info->token_id,parser->lexer->current_line,parser->lexer->character_number-1/* character_number-1 will be where the incorrect punctation is at */,parser->active_file);
     }
+    syntax_tree = init_syntax_tree(TREE_PKG);
     return syntax_tree;
 }
 
@@ -134,16 +136,17 @@ static inline void* parse_id(parser_* parser) {
     return parser;
 }
 
-static inline void* parse_current_state_(parser_* parser,SYN_TREE_* syntax_tree) {
+static inline SYN_TREE_* parse_current_state_(parser_* parser,SYN_TREE_* syntax_tree) {
     switch(parser->current_token_info->token_id) {
-        case TOKEN_ID: return parse_id(parser);break;
-        case _PKG_KEYWORD: return Jang_Pkg_Setup(parser, syntax_tree);break;
-        case IMPORTS_KEYWORD: return IMPORT(parser, syntax_tree);break;
+        case TOKEN_ID: return parse_id(parser);
+        case _PKG_KEYWORD: return Jang_Pkg_Setup(parser, syntax_tree);
+        case IMPORTS_KEYWORD:return IMPORT(parser, syntax_tree);
+        case TOKEN_EOF: break;
         default: {
-            raise_error("\nError: Undefined token method captured\n\n");
+            raise_error("\nError: Undefined token method captured(%d)\n\n",parser->current_token_info->token_id);
         }
     }
-    return parser;
+    return init_syntax_tree(TREE_EOF);
 }
 
 static SYN_TREE_* parse_cua(parser_* parser) {
@@ -152,6 +155,12 @@ static SYN_TREE_* parse_cua(parser_* parser) {
     syntax_tree->syntax_tree_values = calloc(1,sizeof(*syntax_tree->syntax_tree_values));
 
     SYN_TREE_* current_state_parsed = parse_current_state_(parser,syntax_tree);
+
+    while(parser->current_token_info->token_id == TOKEN_SEMI) {
+        gather_next_token(parser, TOKEN_SEMI);
+
+        SYN_TREE_* new_statement = parse_current_state_(parser, syntax_tree);
+    }
 
     return syntax_tree;
 }

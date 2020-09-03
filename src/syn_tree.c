@@ -7,6 +7,7 @@ SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
         /* This switch statement is used to make sure the SYNTAX_TREE_TOKEN_ID is an actual Token Id or not */
         case TREE_PKG:
         case TREE_EXPORTS:
+        case TREE_IMPORTS:
         case TREE_EOF:
         case TREE_DEF: {
             goto continue_;
@@ -37,5 +38,10 @@ SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
     syntax_tree->secondary_imports = calloc(1,sizeof(*syntax_tree->secondary_imports));
     syntax_tree->parser_2_imports = calloc(1,sizeof(*syntax_tree->parser_2_imports));
 
+    return syntax_tree;
+}
+
+/* Set the currently active file(or the file that is running) based off of the package name. */
+SYN_TREE_* set_active_package(SYN_TREE_* syntax_tree) {
     return syntax_tree;
 }

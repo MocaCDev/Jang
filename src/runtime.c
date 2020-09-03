@@ -38,11 +38,26 @@ static inline SYN_TREE_* runtime_look_at_package(RUNTIME_PKG_* runtime_package, 
 
     return syntax_tree;
 }
+static inline SYN_TREE_* runtime_look_at_import(RUNTIME_IMPORTS_* runtime_imports, SYN_TREE_* syntax_tree) {
+
+    printf("HERE");
+    return syntax_tree;
+}
+static inline SYN_TREE_* runtime_look_at_statements(SYN_TREE_* syntax_tree,parser_* parser, lexer_* lexer) {
+
+    for(int i = 0; i < syntax_tree->size_; i++) {
+        check_tree_type((SYN_TREE_*) syntax_tree->syntax_tree_values[i], parser,lexer);
+    }
+
+    return syntax_tree;
+}
 
 SYN_TREE_* check_tree_type(SYN_TREE_* current_node, parser_* parser, lexer_* lexer) {
-
+    printf("HERE:%d",current_node->TREE_TOKEN_TYPE);
     switch(current_node->TREE_TOKEN_TYPE) {
         case TREE_PKG: return runtime_look_at_package(init_package_runtime(parser,lexer),current_node);
+        case TREE_IMPORTS: return runtime_look_at_import(init_import_runtime(parser,lexer),current_node);
+        case TREE_DEF: return runtime_look_at_statements(current_node,parser,lexer);
         default: break;
     }
 

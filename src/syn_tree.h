@@ -7,6 +7,7 @@ typedef struct SYN_TREE {
     enum {
         TREE_DEF,
         TREE_PKG,
+        TREE_IMPORTS,
         TREE_EXPORTS,
         TREE_EOF
     } TREE_TOKEN_TYPE;
