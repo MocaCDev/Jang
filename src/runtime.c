@@ -4,6 +4,7 @@ RUNTIME_IMPORTS_* init_import_runtime(parser_* parser, lexer_* lexer) {
     RUNTIME_IMPORTS_* runtime_imports = calloc(1,sizeof(*runtime_imports));
 
     runtime_imports->amount_of_imports = 0;
+    runtime_imports->lexer_and_parser = calloc(1,sizeof(*runtime_imports->lexer_and_parser));
     runtime_imports->lexer_and_parser->lexer = lexer;
     runtime_imports->lexer_and_parser->parser = parser;
     runtime_imports->import_information = (void*)0;
@@ -34,31 +35,30 @@ RUNTIME_PKG_* init_package_runtime(parser_* parser, lexer_* lexer) {
 }
 
 static inline SYN_TREE_* runtime_look_at_package(RUNTIME_PKG_* runtime_package, SYN_TREE_* syntax_tree) {
-    printf("HERE");
+    printf("HERE!\n");
 
     return syntax_tree;
 }
 static inline SYN_TREE_* runtime_look_at_import(RUNTIME_IMPORTS_* runtime_imports, SYN_TREE_* syntax_tree) {
 
-    printf("HERE");
+    printf("HERE!!\n");
     return syntax_tree;
 }
 static inline SYN_TREE_* runtime_look_at_statements(SYN_TREE_* syntax_tree,parser_* parser, lexer_* lexer) {
 
-    for(int i = 0; i < syntax_tree->size_; i++) {
-        check_tree_type((SYN_TREE_*) syntax_tree->syntax_tree_values[i], parser,lexer);
+    for(int i = 0; i < syntax_tree->amount_of_statements; i++) {
+        check_tree_type(syntax_tree->syntax_tree_values[i], parser,lexer);
     }
 
     return syntax_tree;
 }
 
 SYN_TREE_* check_tree_type(SYN_TREE_* current_node, parser_* parser, lexer_* lexer) {
-    printf("HERE:%d",current_node->TREE_TOKEN_TYPE);
     switch(current_node->TREE_TOKEN_TYPE) {
         case TREE_PKG: return runtime_look_at_package(init_package_runtime(parser,lexer),current_node);
         case TREE_IMPORTS: return runtime_look_at_import(init_import_runtime(parser,lexer),current_node);
         case TREE_DEF: return runtime_look_at_statements(current_node,parser,lexer);
-        case TREE_EXPORTS: printf("YES");break;
+        case TREE_EXPORTS: printf("YES\n");break;
         default: break;
     }
 

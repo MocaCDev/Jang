@@ -23,7 +23,7 @@ int main(int argc, char* args[]) {
     parser_* parser = init_parser(lexer, main_file_path);
     SYN_TREE_* tree = parse(parser);
 
-    if(!(tree->TREE_TOKEN_TYPE == TREE_EOF)) {
+    if(tree) {
         check_tree_type(tree, parser, lexer);
     }
     //} else {

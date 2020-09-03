@@ -19,6 +19,9 @@ SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
     }
     continue_:
     syntax_tree->TREE_TOKEN_TYPE = SYNTAX_TREE_TOKEN_ID;
+    syntax_tree->amount_of_statements = 0;
+    syntax_tree->current_state = (void*)0;
+    syntax_tree->syntax_tree_values = (void*)0;
 
     /* IMPORTED PKG NAME INFORMATION. THIS HAS NOTHING TO DO WITH IMPORTED FILE NAMES */
     //syntax_tree->amount_of_imported_pkg_names = 0;

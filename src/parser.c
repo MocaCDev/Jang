@@ -4,6 +4,7 @@
 #include "file_reader.h"
 #include "syn_tree.h"
 #include "tokens.h"
+#include "runtime.h"
 
 parser_* init_parser(lexer_* lexer, char* active_file) {
     parser_* parser = calloc(1,sizeof(*parser));
@@ -61,7 +62,7 @@ static inline void* check_operation(parser_* parser, char* PKG_, int throw_err) 
 static int import_amount;
 char** arr;
 void** parser_current_state;
-SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
+SYN_TREE_* IMPORT(parser_* parser) {
     if(!(arr)) {
         arr = calloc(1,sizeof(char**));
     }
@@ -81,6 +82,7 @@ SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
 
     parser_* parser__ = init_parser(lexer, parser->current_token_info->token_value);
     SYN_TREE_* syntax_tree_2 = parse(parser__);
+    check_tree_type(syntax_tree_2,parser,lexer);
 
     /* Storing all the names */
     arr = realloc(
@@ -98,15 +100,22 @@ SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
     parser->PKG_INFO->all_imports = arr;*/
 
     /* Setting up syntax tree */
-    syntax_tree = init_syntax_tree(TREE_IMPORTS);
+    SYN_TREE_* syntax_tree = init_syntax_tree(TREE_IMPORTS);
+
+    /* Assigning syntax tree values */
     syntax_tree->import_names = arr;
     syntax_tree->amount_of_imports = parser->PKG_INFO->amount_of_imports;
     syntax_tree->parser_import_information = parser_current_state;
     syntax_tree->secondary_tree = syntax_tree_2;
 
-    if(parser->current_token_info->token_id == TOKEN_SEMI) gather_next_token(parser, TOKEN_SEMI);
+
+    //if(parser->current_token_info->token_id == TOKEN_SEMI) gather_next_token(parser, TOKEN_SEMI);
 
     free(arr);
+    free(parser__);
+    free(lexer);
+    free(tokens);
+    free(syntax_tree_2);
 
     //if(!(parser->current_token_info->token_id == TOKEN_EOF)) parse(parser);
     return syntax_tree;
@@ -116,7 +125,7 @@ SYN_TREE_* IMPORT(parser_* parser, SYN_TREE_* syntax_tree) {
 static int amount_of_packages;
 char** pkg_names;
 void** curent_parser_state;
-SYN_TREE_* Jang_Pkg_Setup(parser_* parser, SYN_TREE_* syntax_tree) {
+SYN_TREE_* Jang_Pkg_Setup(parser_* parser) {
     gather_next_token(parser, _PKG_KEYWORD);
         
     if(parser->current_token_info->token_id == TOKEN_LEFT_CURL) {
@@ -127,28 +136,34 @@ SYN_TREE_* Jang_Pkg_Setup(parser_* parser, SYN_TREE_* syntax_tree) {
     } else {
         raise_error("\nInvalid PKG format. Expected 'PKG{', found '%s'(Token Id Reported: '%d', Line %d, Characters: %d, `%s`)\n\n",parser->current_token_info->token_value,parser->current_token_info->token_id,parser->lexer->current_line,parser->lexer->character_number-1/* character_number-1 will be where the incorrect punctation is at */,parser->active_file);
     }
-    syntax_tree = init_syntax_tree(TREE_PKG);
+    SYN_TREE_* syntax_tree = init_syntax_tree(TREE_PKG);
+
+    /* Assigning syntax tree values*/
+    // NONE right now
     return syntax_tree;
 }
 
-SYN_TREE_* EXPORT(parser_* parser, SYN_TREE_* syntax_tree) {
-    printf("HERE");
-    syntax_tree = init_syntax_tree(TREE_EXPORTS);
+SYN_TREE_* EXPORT(parser_* parser) {
+    printf("HERE\n");
 
+    SYN_TREE_* syntax_tree = init_syntax_tree(TREE_EXPORTS);
+
+    /* Assigning syntax tree values */
+    // NONE RIGHT NOW
     return syntax_tree;
 }
 
 static inline void* parse_id(parser_* parser) {
 
     return parser;
-}
+} 
 
-static inline SYN_TREE_* parse_current_state_(parser_* parser,SYN_TREE_* syntax_tree) {
+static inline SYN_TREE_* parse_current_state_(parser_* parser) {
     switch(parser->current_token_info->token_id) {
         case TOKEN_ID: return parse_id(parser);
-        case _PKG_KEYWORD: return Jang_Pkg_Setup(parser, syntax_tree);
-        case IMPORTS_KEYWORD:return IMPORT(parser, syntax_tree);
-        case EXPORTS_KEYWORD: return EXPORT(parser,syntax_tree);
+        case _PKG_KEYWORD: return Jang_Pkg_Setup(parser);
+        case IMPORTS_KEYWORD:return IMPORT(parser);
+        case EXPORTS_KEYWORD: return EXPORT(parser);
         case TOKEN_EOF: break;
         default: {
             raise_error("\nError: Undefined token method captured(%d)\n\n",parser->current_token_info->token_id);
@@ -158,17 +173,32 @@ static inline SYN_TREE_* parse_current_state_(parser_* parser,SYN_TREE_* syntax_
 }
 
 static SYN_TREE_* parse_cua(parser_* parser) {
-
     SYN_TREE_* syntax_tree = init_syntax_tree(TREE_DEF);
+
     syntax_tree->syntax_tree_values = calloc(1,sizeof(*syntax_tree->syntax_tree_values));
 
     /* Storing everything in the Syntax Tree */
-    syntax_tree->current_state = (SYN_TREE_*) parse_current_state_(parser, syntax_tree);
+    syntax_tree->current_state = parse_current_state_(parser);
+
+    syntax_tree->syntax_tree_values[0] = syntax_tree->current_state;
+    syntax_tree->amount_of_statements++;
 
     while(parser->current_token_info->token_id == TOKEN_SEMI) {
         gather_next_token(parser, TOKEN_SEMI);
 
-        SYN_TREE_* new_statement = parse_current_state_(parser, syntax_tree);
+        //free(syntax_tree->current_state);
+        syntax_tree->current_state = parse_current_state_(parser);
+
+        if(syntax_tree->current_state) {
+            syntax_tree->amount_of_statements++;
+
+            /* Reallocating memory then assigning */
+            syntax_tree->syntax_tree_values = realloc(
+                syntax_tree->syntax_tree_values,
+                syntax_tree->amount_of_statements*sizeof(*syntax_tree->syntax_tree_values)
+            );
+            syntax_tree->syntax_tree_values[syntax_tree->amount_of_statements-1] = syntax_tree->current_state;
+        }
     }
 
     return syntax_tree;

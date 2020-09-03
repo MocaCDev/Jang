@@ -18,7 +18,7 @@ typedef struct SYN_TREE {
     /* For TREE_DEF */
     struct SYN_TREE* current_state;
     struct SYN_TREE** syntax_tree_values;
-    size_t size_;
+    size_t amount_of_statements;
 
     /* PKG INFORMATION */
     /* IMPORTED PKG NAME INFORMATION. THIS HAS NOTHING TO DO WITH IMPORTED FILE NAMES */
