@@ -16,7 +16,8 @@ typedef struct SYN_TREE {
     struct SYN_TREE* secondary_tree;
 
     /* For TREE_DEF */
-    struct SYN_TREE_** syntax_tree_values;
+    struct SYN_TREE* current_state;
+    struct SYN_TREE** syntax_tree_values;
     size_t size_;
 
     /* PKG INFORMATION */

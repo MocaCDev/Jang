@@ -131,6 +131,13 @@ SYN_TREE_* Jang_Pkg_Setup(parser_* parser, SYN_TREE_* syntax_tree) {
     return syntax_tree;
 }
 
+SYN_TREE_* EXPORT(parser_* parser, SYN_TREE_* syntax_tree) {
+    printf("HERE");
+    syntax_tree = init_syntax_tree(TREE_EXPORTS);
+
+    return syntax_tree;
+}
+
 static inline void* parse_id(parser_* parser) {
 
     return parser;
@@ -141,6 +148,7 @@ static inline SYN_TREE_* parse_current_state_(parser_* parser,SYN_TREE_* syntax_
         case TOKEN_ID: return parse_id(parser);
         case _PKG_KEYWORD: return Jang_Pkg_Setup(parser, syntax_tree);
         case IMPORTS_KEYWORD:return IMPORT(parser, syntax_tree);
+        case EXPORTS_KEYWORD: return EXPORT(parser,syntax_tree);
         case TOKEN_EOF: break;
         default: {
             raise_error("\nError: Undefined token method captured(%d)\n\n",parser->current_token_info->token_id);
@@ -154,7 +162,8 @@ static SYN_TREE_* parse_cua(parser_* parser) {
     SYN_TREE_* syntax_tree = init_syntax_tree(TREE_DEF);
     syntax_tree->syntax_tree_values = calloc(1,sizeof(*syntax_tree->syntax_tree_values));
 
-    SYN_TREE_* current_state_parsed = parse_current_state_(parser,syntax_tree);
+    /* Storing everything in the Syntax Tree */
+    syntax_tree->current_state = (SYN_TREE_*) parse_current_state_(parser, syntax_tree);
 
     while(parser->current_token_info->token_id == TOKEN_SEMI) {
         gather_next_token(parser, TOKEN_SEMI);

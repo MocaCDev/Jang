@@ -58,6 +58,7 @@ SYN_TREE_* check_tree_type(SYN_TREE_* current_node, parser_* parser, lexer_* lex
         case TREE_PKG: return runtime_look_at_package(init_package_runtime(parser,lexer),current_node);
         case TREE_IMPORTS: return runtime_look_at_import(init_import_runtime(parser,lexer),current_node);
         case TREE_DEF: return runtime_look_at_statements(current_node,parser,lexer);
+        case TREE_EXPORTS: printf("YES");break;
         default: break;
     }
 
