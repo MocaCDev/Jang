@@ -35,14 +35,19 @@ RUNTIME_EXPORTS_* init_export_runtime(parser_* parser, lexer_* lexer) {
 }
 
 RUNTIME_PKG_* init_package_runtime(parser_* parser, lexer_* lexer) {
-    RUNTIME_PKG_* runtime_package = calloc(1,sizeof(*runtime_package));
+    if(!(lexer->has_package == 0)) {
+        RUNTIME_PKG_* runtime_package = calloc(1,sizeof(*runtime_package));
+        lexer->has_package = 0;
 
-    runtime_package->amount_of_packages = 0;
-    runtime_package->lexer_and_parser = calloc(2,sizeof(*lexer)*sizeof(*parser));
-    runtime_package->lexer_and_parser->lexer = lexer;
-    runtime_package->lexer_and_parser->parser = parser;
-    runtime_package->package_information = (void*)0;
-    return runtime_package;
+        runtime_package->amount_of_packages = 0;
+        runtime_package->lexer_and_parser = calloc(2,sizeof(*lexer)*sizeof(*parser));
+        runtime_package->lexer_and_parser->lexer = lexer;
+        runtime_package->lexer_and_parser->parser = parser;
+        runtime_package->package_information = (void*)0;
+        return runtime_package;
+    } else {
+        raise_error("\nThe file '%s' already has a package.\nRemove line %d to resolve this error\n\n",parser->active_file,lexer->current_line-1);
+    }
 }
 
 static inline SYN_TREE_* runtime_look_at_package(RUNTIME_PKG_* runtime_package, SYN_TREE_* syntax_tree) {

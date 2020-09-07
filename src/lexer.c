@@ -25,6 +25,7 @@ lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
     lexer->is_string_assignment = 1;
     lexer->imports = 0;
     lexer->is_special = 1;
+    lexer->has_package = 1;
 
     return lexer;
 }
@@ -101,7 +102,19 @@ static inline void* gather_converted_string(lexer_* lexer, int is_variable_name,
             strcat(string_value,convert_to_string(lexer));
 
             advance(lexer);
-            if(lexer->current_char == ' ' || lexer->current_char == ':' || lexer->current_char == '\0' ||lexer->current_char == ';') break;
+            if(
+                /* This needs to be done. All characters below should not be picked up. */
+                lexer->current_char == ' ' || 
+                lexer->current_char == ':' || 
+                lexer->current_char == '\0' ||
+                lexer->current_char == ';' ||
+                lexer->current_char == '{' ||
+                lexer->current_char == '}' ||
+                lexer->current_char == '[' ||
+                lexer->current_char == ']' ||
+                lexer->current_char == '('||
+                lexer->current_char == ')'
+            ) break;
         } while(1);
 
         lexer->tokens->token_value = string_value;

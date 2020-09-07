@@ -11,6 +11,7 @@ typedef struct lexer {
     char* var_name;
     Tokens_* tokens;
     int is_import;
+    int has_package;
     int is_string_assignment;
     int imports;
     int is_special;

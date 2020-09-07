@@ -48,7 +48,7 @@ static inline void* check_operation(parser_* parser, char* PKG_, int throw_err) 
     }
     else {
         if(throw_err == 0) {
-            raise_error("\nMissing key token ideal for %s\n\n",PKG_);
+            raise_error("\nMissing key token ideal for %s(':' or '=')\n\n",PKG_);
         }
     }
     return parser;
@@ -148,6 +148,10 @@ SYN_TREE_* EXPORT(parser_* parser) {
     printf("HERE\n");
 
     SYN_TREE_* syntax_tree = init_syntax_tree(TREE_EXPORTS);
+
+    if(parser->current_token_info->token_id == TOKEN_LEFT_CURL) {
+        gather_next_token(parser, TOKEN_LEFT_CURL);
+    }
 
     /* Assigning syntax tree values */
     // NONE RIGHT NOW
