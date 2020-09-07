@@ -41,9 +41,9 @@ static inline void advance(lexer_* lexer) {
         }
         update_token_info(lexer->current_line, lexer->character_number, lexer->tokens);
         
-        if(lexer->current_char == '_' && !(lexer->is_special==0)) {
+        /*if(lexer->current_char == '_' && !(lexer->is_special==0)) {
             advance(lexer);
-        }
+        }*/
     }
 }
 
@@ -101,10 +101,11 @@ static inline void* gather_converted_string(lexer_* lexer, int is_variable_name,
             strcat(string_value,convert_to_string(lexer));
 
             advance(lexer);
-            if(lexer->current_char == ' ' || lexer->current_char == ':' || lexer->current_char == '\0' || lexer->current_char == ';') break;
+            if(lexer->current_char == ' ' || lexer->current_char == ':' || lexer->current_char == '\0' ||lexer->current_char == ';') break;
         } while(1);
 
         lexer->tokens->token_value = string_value;
+        lexer->is_special = 1;
 
         return lexer;
     }
@@ -213,14 +214,15 @@ Tokens_* get_next_token(lexer_* lexer) {
             advance(lexer);
             return gather_id(lexer,1);
         }
-
         if(ispunct(lexer->current_char) && lexer->current_char == '_') {
+            lexer->is_special = 0;
             gather_id(lexer,lexer->is_special);
-
+            
             if(strcmp(lexer->tokens->token_value,_EXPORTS_KEYWORD)==0) {
                 lexer->tokens = init_token(EXPORTS_KEYWORD,lexer->tokens->token_value, lexer->tokens);
                 return lexer->tokens;
             }
+            printf("%s",lexer->tokens->token_value);
             lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value,lexer->tokens);
             return lexer->tokens;
         }
@@ -239,15 +241,15 @@ Tokens_* get_next_token(lexer_* lexer) {
             ) {
                 lexer->tokens = init_token(_PKG_KEYWORD, lexer->tokens->token_value, lexer->tokens);
                 return lexer->tokens;
-            } else if(
+            } //else if(
                 /* This has to be done otherwise the underscore isn't captured */
-                strcmp(lexer->tokens->token_value,"EXPORTS")==0
+                /*strcmp(lexer->tokens->token_value,"EXPORTS")==0
             ) {
                 lexer->tokens->token_value = (char*)_EXPORTS_KEYWORD;
 
                 lexer->tokens = init_token(EXPORTS_KEYWORD,lexer->tokens->token_value,lexer->tokens);
                 return lexer->tokens;
-            }
+            }*/
             lexer->tokens = init_token(TOKEN_ID,lexer->tokens->token_value, lexer->tokens);
             return lexer->tokens;
         }

@@ -11,13 +11,16 @@ struct Basic_Lexer_Parser {
     parser_* parser;
 } BASIC_LEXER_PARSER;
 
-typedef struct Basic_Lexer_Parser* l_a_p;
+typedef struct Basic_Lexer_Parser l_a_p;
 
 /* FOR IMPORTS */
 typedef struct RUNTIME_IMPORTS {
     SYN_TREE_** import_information;
     size_t amount_of_imports;
-    l_a_p lexer_and_parser;
+    l_a_p* lexer_and_parser; /*
+        Both will be init of each struct.
+    */
+    char* curent_file_name;
 } RUNTIME_IMPORTS_;
 
 typedef struct RUNTIME_PKG {
@@ -27,7 +30,7 @@ typedef struct RUNTIME_PKG {
         But, I may add in a feature where a file does not need a package declaration.
         But for now, it is a must.
     */
-    l_a_p lexer_and_parser;
+    l_a_p* lexer_and_parser;
 } RUNTIME_PKG_;
 
 typedef struct RUNTIME_EXPORTS {
@@ -35,11 +38,11 @@ typedef struct RUNTIME_EXPORTS {
         This should store all export variable names, functions etc..
     */
     size_t amount_of_exports;
-    l_a_p lexer_and_parser;
+    l_a_p* lexer_and_parser;
 } RUNTIME_EXPORTS_;
 
 /* RUNTIME_IMPORTS */
-RUNTIME_IMPORTS_* init_import_runtime(parser_* parser, lexer_* lexer);
+RUNTIME_IMPORTS_* init_import_runtime(char* import_file_name);
 
 /* RUNTIME_PKG */
 RUNTIME_PKG_* init_package_runtime(parser_* parser, lexer_* lexer);

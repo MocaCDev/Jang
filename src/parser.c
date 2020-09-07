@@ -63,6 +63,7 @@ static int import_amount;
 char** arr;
 void** parser_current_state;
 SYN_TREE_* IMPORT(parser_* parser) {
+    gather_next_token(parser, IMPORTS_KEYWORD);
     if(!(arr)) {
         arr = calloc(1,sizeof(char**));
     }
@@ -71,18 +72,18 @@ SYN_TREE_* IMPORT(parser_* parser) {
     }
     parser->lexer->is_import = 0;
     /* TODO: Finsish This. This is a very sloppy version */
-    gather_next_token(parser, IMPORTS_KEYWORD);
-    Tokens_* tokens = calloc(1,sizeof(*tokens));
-    lexer_* lexer = init_lexer(read_file(strcat(parser->current_token_info->token_value,".jang")),tokens);
+    //gather_next_token(parser, IMPORTS_KEYWORD);
+    //Tokens_* tokens = calloc(1,sizeof(*tokens));
+    //lexer_* lexer = init_lexer(read_file(strcat(parser->current_token_info->token_value,".jang")),tokens);
 
     if(strcmp(parser->current_token_info->token_value,parser->active_file)==0) raise_error("\nCannot import main file(line %d)\n\n",parser->lexer->current_line);
 
     /* STORING IMPORTED FILE NAME */
     parser->PKG_INFO->current_import_name = parser->current_token_info->token_value;
 
-    parser_* parser__ = init_parser(lexer, parser->current_token_info->token_value);
-    SYN_TREE_* syntax_tree_2 = parse(parser__);
-    check_tree_type(syntax_tree_2,parser,lexer);
+    //parser_* parser__ = init_parser(lexer, parser->current_token_info->token_value);
+    //SYN_TREE_* syntax_tree_2 = parse(parser__);
+    //check_tree_type(syntax_tree_2,parser,lexer);
 
     /* Storing all the names */
     arr = realloc(
@@ -106,16 +107,16 @@ SYN_TREE_* IMPORT(parser_* parser) {
     syntax_tree->import_names = arr;
     syntax_tree->amount_of_imports = parser->PKG_INFO->amount_of_imports;
     syntax_tree->parser_import_information = parser_current_state;
-    syntax_tree->secondary_tree = syntax_tree_2;
-
 
     //if(parser->current_token_info->token_id == TOKEN_SEMI) gather_next_token(parser, TOKEN_SEMI);
 
-    free(arr);
-    free(parser__);
-    free(lexer);
-    free(tokens);
-    free(syntax_tree_2);
+    //free(arr);
+    //free(parser__);
+    //free(lexer);
+    //free(tokens);
+    //free(syntax_tree_2);
+
+    gather_next_token(parser, TOKEN_ID);
 
     //if(!(parser->current_token_info->token_id == TOKEN_EOF)) parse(parser);
     return syntax_tree;
@@ -127,7 +128,7 @@ char** pkg_names;
 void** curent_parser_state;
 SYN_TREE_* Jang_Pkg_Setup(parser_* parser) {
     gather_next_token(parser, _PKG_KEYWORD);
-        
+
     if(parser->current_token_info->token_id == TOKEN_LEFT_CURL) {
         gather_next_token(parser, TOKEN_LEFT_CURL);
 

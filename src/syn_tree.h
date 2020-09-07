@@ -35,6 +35,7 @@ typedef struct SYN_TREE {
     /* MAIN PKG IMPORTS */
     size_t amount_of_imports;
     char** import_names;
+    //char* current_import_name;
     void** parser_import_information; /*
         This parser struct array will be used to check each import name
         against each ideal in the import_names array
