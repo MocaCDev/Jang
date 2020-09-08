@@ -15,10 +15,10 @@ RUNTIME_IMPORTS_* init_import_runtime(char* imported_file_name) {
     /* Lexer setup */
     Tokens_* tokens = calloc(1,sizeof(*tokens));
     file_check_extension(imported_file_name,".jang"); // checking for .jang as the extension
-    runtime_imports->lexer_and_parser->lexer = init_lexer(read_file(imported_file_name),tokens);
+    //runtime_imports->lexer_and_parser->lexer = init_lexer(read_file(imported_file_name),tokens);
 
     /* Parser setup */
-    runtime_imports->lexer_and_parser->parser = init_parser(runtime_imports->lexer_and_parser->lexer, (char*) imported_file_name);
+    //runtime_imports->lexer_and_parser->parser = init_parser(runtime_imports->lexer_and_parser->lexer, (char*) imported_file_name);
 
     return runtime_imports;
 }

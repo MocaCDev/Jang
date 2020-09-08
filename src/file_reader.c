@@ -1,4 +1,5 @@
 #include "file_reader.h"
+#define UNIVERSAL
 #include "easy_access.h"
 #include <stdio.h>
 
@@ -33,31 +34,26 @@ void* gather_main_jang_file() {
     If the extension is not in file_name, we will add it the continue.
 */
 char* file_check_extension(char* file_name, char* extension) {
-    int index, length_;
-    char* find_current_extension; // this might not be assigned
 
-    for(;index < strlen(file_name); index++) {
+    int index = 0, length;
+
+    char* curr_extension = calloc(1,sizeof(char));
+
+    for(; index < strlen(file_name); index++) {
         if(file_name[index] == '.') {
-            while(file_name[index] != '\0') {
-                char* value = calloc(1,sizeof(char*));
-
-                value[0] = file_name[index];
-                value[1] = '\0';
-
-                length_++;
-                find_current_extension = realloc(find_current_extension,length_*sizeof(char*));
-                strcat(find_current_extension,value);
+            do {
                 index++;
-            }
-        }
-    }
 
-    if(find_current_extension) {
-        if(!(strcmp(find_current_extension,extension)==0)) {
-            raise_error("\nCannot import file: %s\n\n",file_name);
+                char* new_val = universal_convert_to_string(file_name[index]);
+
+                curr_extension = realloc(
+                    curr_extension,
+                    strlen(new_val)*sizeof(char*)
+                );
+                strcat(curr_extension,new_val);
+                
+            } while(file_name[index] != '\0');
         }
-    } else {
-        strcat(file_name,extension);
     }
 
     return file_name;

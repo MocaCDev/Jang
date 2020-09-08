@@ -1,15 +1,15 @@
+#define DECLARE_KEYWORDS
 #include "easy_access.h"
 #include "lexer.h"
 
 /* KEYWORDS */
 
-/* All importing/exporting keyword features */
-const char* _EXPORTS_KEYWORD = "_EXPORTS_";
-const char* _IMPORTS_KEYWORD = "IMPORT";
-
-/* PKG keyword. */
-const char* _PKG_KEYWROD = "PKG";
-const char* _pkg_KEYWROD = "pkg";
+const char* const keywords[] = {
+    "_EXPORTS_", // _EXPORTS_KEYWORD_
+    "IMPORT", // _IMPORTS_KEYWORD_
+    "PKG", // _PKG_KEYWORD_
+    "pkg" // _pkg_KEYWORD_
+};
 
 lexer_* init_lexer(const char* file_contents, Tokens_* tokens) {
     lexer_* lexer = calloc(1,sizeof(*lexer));
@@ -231,7 +231,7 @@ Tokens_* get_next_token(lexer_* lexer) {
             lexer->is_special = 0;
             gather_id(lexer,lexer->is_special);
             
-            if(strcmp(lexer->tokens->token_value,_EXPORTS_KEYWORD)==0) {
+            if(strcmp(lexer->tokens->token_value,_EXPORTS_KEYWORD_)==0) {
                 lexer->tokens = init_token(EXPORTS_KEYWORD,lexer->tokens->token_value, lexer->tokens);
                 return lexer->tokens;
             }
@@ -243,14 +243,14 @@ Tokens_* get_next_token(lexer_* lexer) {
         if(isalnum(lexer->current_char)) {
             gather_id(lexer,lexer->is_special);
             if(
-                strcmp(lexer->tokens->token_value,_IMPORTS_KEYWORD)==0
+                strcmp(lexer->tokens->token_value,_IMPORTS_KEYWORD_)==0
             ) {
                 lexer->tokens = init_token(IMPORTS_KEYWORD, lexer->tokens->token_value, lexer->tokens);
 
                 //lexer->pkg_found = 0;
                 return lexer->tokens;
             } else if(
-                strcmp(lexer->tokens->token_value,_PKG_KEYWROD) == 0
+                strcmp(lexer->tokens->token_value,_PKG_KEYWORD_) == 0
             ) {
                 lexer->tokens = init_token(_PKG_KEYWORD, lexer->tokens->token_value, lexer->tokens);
                 return lexer->tokens;
