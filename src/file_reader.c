@@ -1,6 +1,6 @@
 #include "file_reader.h"
-#define UNIVERSAL
-#include "easy_access.h"
+//#define UNIVERSAL
+//#include "easy_access.h"
 #include <stdio.h>
 #include "parser.h"
 

@@ -1,5 +1,5 @@
-#define DECLARE_KEYWORDS
-#include "easy_access.h"
+//#define DECLARE_KEYWORDS
+//#include "easy_access.h"
 #include "lexer.h"
 
 /* KEYWORDS */

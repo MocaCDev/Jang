@@ -5,6 +5,17 @@
 #include <string.h>
 #include <ctype.h>
 
+#ifdef INCLUDE_ALL_HEADERS
+
+#include "file_reader.h"
+#include "lexer.h"
+#include "parser.h"
+#include "runtime.h"
+#include "syn_tree.h"
+#include "tokens.h"
+
+#endif
+
 #define CLOSE(exit_error) exit(exit_error)
 #define raise_error(errmsg, ...) fprintf(stderr,errmsg, ##__VA_ARGS__), CLOSE(EXIT_FAILURE)
 

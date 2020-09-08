@@ -1,5 +1,7 @@
 #ifndef LEXER
 #define LEXER
+#define DECLARE_KEYWORDS
+#include "easy_access.h"
 #include "tokens.h"
 
 typedef struct lexer {

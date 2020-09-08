@@ -1,5 +1,7 @@
 #ifndef file_reader
 #define file_reader
+#define UNIVERSAL
+#include "easy_access.h"
 #include <stdlib.h>
 
 typedef struct FILE_BUFFER {
