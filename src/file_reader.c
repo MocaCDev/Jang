@@ -35,7 +35,7 @@ void* gather_main_jang_file() {
 */
 char* file_check_extension(char* file_name, char* extension) {
 
-    int index = 0, length;
+    int index = 0;
 
     char* curr_extension = calloc(1,sizeof(char));
 
@@ -54,6 +54,10 @@ char* file_check_extension(char* file_name, char* extension) {
                 
             } while(file_name[index] != '\0');
         }
+    }
+
+    if(!(strlen(curr_extension) > 1)) {
+        strcat(file_name,extension);
     }
 
     return file_name;
