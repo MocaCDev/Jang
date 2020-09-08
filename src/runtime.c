@@ -4,30 +4,41 @@
 #include "lexer.h"
 
 RUNTIME_IMPORTS_* init_import_runtime(char* imported_file_name, parser_* parser, char* main_file) {
-    RUNTIME_IMPORTS_* runtime_imports = calloc(1,sizeof(*runtime_imports));
 
-    runtime_imports->amount_of_imports = 0;
-    runtime_imports->import_information = (void*)0;
+    { // init ideals for RUNTIME_EXPORTS_* structs
+        RUNTIME_IMPORTS_* runtime_imports = calloc(1,sizeof(*runtime_imports));
 
-    /* Lexer and parser setup */
-    runtime_imports->lexer_and_parser = calloc(1,sizeof(*runtime_imports->lexer_and_parser));
+        runtime_imports->amount_of_imports = 0;
+        runtime_imports->import_information = (void*)0;
 
-    /* Lexer setup */
-    Tokens_* tokens = calloc(1,sizeof(*tokens));
-    file_check_extension(imported_file_name,".jang"); // checking for .jang as the extension
+        /* Lexer and parser setup */
+        runtime_imports->lexer_and_parser = calloc(1,sizeof(*runtime_imports->lexer_and_parser));
+
+        /* Lexer setup */
+        Tokens_* tokens = calloc(1,sizeof(*tokens));
+        file_check_extension(imported_file_name,".jang"); // checking for .jang as the extension
     
-    /* Checking to see if the file we are importing is the same as the currently active file */
-    if(strcmp(imported_file_name,parser->active_file)==0)raise_error("\nCannot import '%s' into its own file(line %d)\n\n",imported_file_name,parser->lexer->current_line);
+        { // Checking Imported Filenames
+            /* Checking to see if the file we are importing is the same as the currently active file */
+            if(strcmp(imported_file_name,parser->active_file)==0) {
+                raise_error("\nCannot import '%s' into its own file(line %d)\n\n",imported_file_name,parser->lexer->current_line);
+            }
 
-    /* Checking to see if the file we are importing is the same as the main file */
-    if(strcmp(imported_file_name,main_file)==0) raise_error("\nCannot import main file(%s) into '%s'(line %d)\n\n",main_file,parser->active_file,parser->lexer->current_line-1);
+            /* Checking to see if the file we are importing is the same as the main file */
+            if(strcmp(imported_file_name,main_file)==0) {
+                raise_error("\nCannot import main file(%s) into '%s'(line %d)\n\n",main_file,parser->active_file,parser->lexer->current_line-1);
+            }
+        }
 
-    runtime_imports->lexer_and_parser->lexer = init_lexer(read_file(imported_file_name),tokens);
+        { // setting up lexer and parser
+            runtime_imports->lexer_and_parser->lexer = init_lexer(read_file(imported_file_name),tokens);
 
-    /* Parser setup */
-    runtime_imports->lexer_and_parser->parser = init_parser(runtime_imports->lexer_and_parser->lexer, (char*) imported_file_name);
+            /* Parser setup */
+            runtime_imports->lexer_and_parser->parser = init_parser(runtime_imports->lexer_and_parser->lexer, (char*) imported_file_name);
+        }
 
-    return runtime_imports;
+        return runtime_imports;
+    }
 }
 
 RUNTIME_EXPORTS_* init_export_runtime(parser_* parser, lexer_* lexer) {
