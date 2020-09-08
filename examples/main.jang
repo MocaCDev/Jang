@@ -1,5 +1,2 @@
 IMPORT "examples/packager";
 PKG{};
-_EXPORTS_{
-
-}

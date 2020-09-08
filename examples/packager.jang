@@ -1,2 +1,2 @@
-//PKG{};
-_EXPORTS_
+IMPORT "examples/main";
+PKG{};

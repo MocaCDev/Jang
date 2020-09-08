@@ -24,7 +24,7 @@ int main(int argc, char* args[]) {
     SYN_TREE_* tree = parse(parser);
 
     if(tree) {
-        check_tree_type(tree, parser, lexer);
+        check_tree_type(tree, parser, lexer, main_file_path);
     }
     //} else {
         //fprintf(stderr,"\nError: The Jang compiler expects the following command:\n./main.o <filename>\n\n");

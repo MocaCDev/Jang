@@ -2,6 +2,7 @@
 #define UNIVERSAL
 #include "easy_access.h"
 #include <stdio.h>
+#include "parser.h"
 
 /* THIS FILE WILL SUPPORT ALL FILE HANDLING WITHIN THE Jang PROGRAMMING LANGUAGE */
 

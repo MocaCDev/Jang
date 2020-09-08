@@ -42,7 +42,7 @@ typedef struct RUNTIME_EXPORTS {
 } RUNTIME_EXPORTS_;
 
 /* RUNTIME_IMPORTS */
-RUNTIME_IMPORTS_* init_import_runtime(char* import_file_name);
+RUNTIME_IMPORTS_* init_import_runtime(char* import_file_name, parser_* parser, char* main_file);
 
 /* RUNTIME_PKG */
 RUNTIME_PKG_* init_package_runtime(parser_* parser, lexer_* lexer);
@@ -50,6 +50,6 @@ RUNTIME_PKG_* init_package_runtime(parser_* parser, lexer_* lexer);
 /* RUNTIME_EXPORTS  */
 RUNTIME_EXPORTS_* init_export_runtime(parser_* parser, lexer_* lexer);
 
-SYN_TREE_* check_tree_type(SYN_TREE_* current_node, parser_* parser, lexer_* lexer);
+SYN_TREE_* check_tree_type(SYN_TREE_* current_node, parser_* parser, lexer_* lexer, char* main_file_path);
 
 #endif

@@ -14,6 +14,7 @@ typedef struct parser {
     struct {
         size_t amount_of_imports;
         char* current_import_name;
+        char* last_imported_name;
         //char** all_imports;
         //char** imports; ~ This was not needed since we are storing a parser_ struct array for out syntax tree and runtime. All checkings will happen there
     } *PKG_INFO;

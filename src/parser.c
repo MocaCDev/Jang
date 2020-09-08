@@ -17,6 +17,7 @@ parser_* init_parser(lexer_* lexer, char* active_file) {
     //parser->PKG_INFO->all_imports = calloc(1,sizeof(*parser->PKG_INFO->all_imports));
     //parser->PKG_INFO->amount_of_imports = 0;
     parser->PKG_INFO->current_import_name = calloc(1,sizeof(char));
+    parser->PKG_INFO->last_imported_name = calloc(1,sizeof(char));
     //parser->PKG_INFO->export_values = calloc(1,sizeof(char*));
     //parser->PKG_INFO->imports = calloc(1,sizeof(parser->PKG_INFO->imports));
 
@@ -93,6 +94,8 @@ SYN_TREE_* IMPORT(parser_* parser) {
     arr[import_amount] = parser->PKG_INFO->current_import_name;
     import_amount++;
 
+    if(strcmp(parser->PKG_INFO->last_imported_name,parser->PKG_INFO->current_import_name)==0) raise_error("\nCannot import the file '%s' twice(line %d)\n\n",parser->PKG_INFO->last_imported_name,parser->lexer->current_line);
+
     parser->PKG_INFO->amount_of_imports = import_amount;
     /*parser->PKG_INFO->all_imports = realloc(
         parser->PKG_INFO->all_imports,
@@ -117,6 +120,7 @@ SYN_TREE_* IMPORT(parser_* parser) {
     //free(syntax_tree_2);
 
     gather_next_token(parser, TOKEN_ID);
+    parser->PKG_INFO->last_imported_name = parser->PKG_INFO->current_import_name;
 
     //if(!(parser->current_token_info->token_id == TOKEN_EOF)) parse(parser);
     return syntax_tree;
