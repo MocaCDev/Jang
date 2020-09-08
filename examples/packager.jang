@@ -1,2 +1,2 @@
-IMPORT "examples/main";
 PKG{};
+IMPORT "examples/e";

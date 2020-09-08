@@ -18,6 +18,9 @@ SYN_TREE_* init_syntax_tree(int SYNTAX_TREE_TOKEN_ID) {
         }
     }
     continue_:
+    syntax_tree->secondary_tree = calloc(1,sizeof(*syntax_tree->secondary_tree));
+    syntax_tree->amount_of_secondary_trees = 0;
+
     syntax_tree->TREE_TOKEN_TYPE = SYNTAX_TREE_TOKEN_ID;
     syntax_tree->amount_of_statements = 0;
     syntax_tree->current_state = (void*)0;

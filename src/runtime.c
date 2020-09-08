@@ -3,7 +3,11 @@
 #include "tokens.h"
 #include "lexer.h"
 
-RUNTIME_IMPORTS_* init_import_runtime(char* imported_file_name, parser_* parser, char* main_file) {
+static int amount_of_secondary_trees;
+RUNTIME_IMPORTS_* init_import_runtime(SYN_TREE_* current_node,char* imported_file_name, parser_* parser, char* main_file) {
+
+    parser->size = ++amount_of_secondary_trees;
+    current_node->amount_of_secondary_trees = parser->size;
 
     { // init ideals for RUNTIME_EXPORTS_* structs
         RUNTIME_IMPORTS_* runtime_imports = calloc(1,sizeof(*runtime_imports));
@@ -79,12 +83,24 @@ static inline SYN_TREE_* runtime_look_at_package(RUNTIME_PKG_* runtime_package, 
     ToDo: Find out a way store the imported file code for later use in the file it was imported in.
         -> This is done by storing all ideal variable/function etc names and values/functionalities to refer to when being used in the file it was all imported in
 */
-static inline SYN_TREE_* runtime_look_at_import(RUNTIME_IMPORTS_* runtime_imports, SYN_TREE_* syntax_tree, char* main_file_path) {
+static inline SYN_TREE_* runtime_look_at_import(RUNTIME_IMPORTS_* runtime_imports, SYN_TREE_* syntax_tree, char* main_file_path, parser_* parser) {
 
     printf("Import!!\n");
 
+    syntax_tree->secondary_tree = realloc(
+        syntax_tree->secondary_tree,
+        syntax_tree->amount_of_secondary_trees*sizeof(syntax_tree->secondary_tree)
+    );
+    syntax_tree->amount_of_imports = syntax_tree->amount_of_secondary_trees;
+
     SYN_TREE_* tree = parse(runtime_imports->lexer_and_parser->parser);
     check_tree_type(tree, runtime_imports->lexer_and_parser->parser, runtime_imports->lexer_and_parser->lexer,main_file_path);
+
+    syntax_tree->secondary_tree[syntax_tree->amount_of_secondary_trees-1] = tree;
+    //syntax_tree->amount_of_imports = syntax_tree->amount_of_secondary_trees;
+
+    parser->secondary_trees = syntax_tree->secondary_tree;
+    //++parser->size;
 
     return syntax_tree;
 }
@@ -100,7 +116,7 @@ static inline SYN_TREE_* runtime_look_at_statements(SYN_TREE_* syntax_tree,parse
 SYN_TREE_* check_tree_type(SYN_TREE_* current_node, parser_* parser, lexer_* lexer, char* main_file_path) {
     switch(current_node->TREE_TOKEN_TYPE) {
         case TREE_PKG: return runtime_look_at_package(init_package_runtime(parser,lexer),current_node);
-        case TREE_IMPORTS: return runtime_look_at_import(init_import_runtime(current_node->import_names[current_node->amount_of_imports-1],parser,main_file_path),current_node, main_file_path);
+        case TREE_IMPORTS: return runtime_look_at_import(init_import_runtime(current_node,current_node->import_names[current_node->amount_of_imports-1],parser,main_file_path),current_node, main_file_path,parser);
         case TREE_DEF: return runtime_look_at_statements(current_node,parser,lexer,main_file_path);
         case TREE_EXPORTS: printf("Exports\n");break;
         default: break;

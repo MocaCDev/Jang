@@ -42,7 +42,7 @@ typedef struct RUNTIME_EXPORTS {
 } RUNTIME_EXPORTS_;
 
 /* RUNTIME_IMPORTS */
-RUNTIME_IMPORTS_* init_import_runtime(char* import_file_name, parser_* parser, char* main_file);
+RUNTIME_IMPORTS_* init_import_runtime(SYN_TREE_* current_node, char* import_file_name, parser_* parser, char* main_file);
 
 /* RUNTIME_PKG */
 RUNTIME_PKG_* init_package_runtime(parser_* parser, lexer_* lexer);

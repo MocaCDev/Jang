@@ -13,7 +13,8 @@ typedef struct SYN_TREE {
     } TREE_TOKEN_TYPE;
 
     /* SECONDARY TREE FOR IMPORTED FILES */
-    struct SYN_TREE* secondary_tree;
+    struct SYN_TREE** secondary_tree;
+    size_t amount_of_secondary_trees;
 
     /* For TREE_DEF */
     struct SYN_TREE* current_state;

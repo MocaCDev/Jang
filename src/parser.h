@@ -10,6 +10,11 @@ typedef struct parser {
     Tokens_* last_token_info;
     lexer_* lexer;
     char* active_file;
+    SYN_TREE_** secondary_trees; /*
+        Temporarily storing all secondary syntax trees in the parser
+        for later references
+    */
+    size_t size;
 
     struct {
         size_t amount_of_imports;
